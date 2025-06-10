@@ -1,0 +1,38 @@
+/* Ersetzen Sie den vorhandenen Inhalt in app.scss mit diesem */
+.container {
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.demo-card {
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}
+
+.radio-group mat-radio-button {
+  margin-bottom: 5px;
+}
+
+.highlight {
+  background-color: yellow;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+
+.full-width {
+  width: 100%;
+}
