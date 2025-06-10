@@ -11,66 +11,41 @@ on:
 
 jobs:
   build_and_deploy_job:
-    # Dieser Job wird ausgeführt bei jedem Push auf 'main' oder wenn ein PR geöffnet/synchronisiert/erneut geöffnet wird.
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-    runs-on: ubuntu-latest # Der Runner, auf dem der Job ausgeführt wird (z.B. ein Linux-System)
+    runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      # Schritt 1: Repository auschecken
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Schritt 2: Node.js einrichten
-      # Stellt die angegebene Node.js-Version bereit. Wichtig für Angular CLI und npm.
       - name: Use Node.js 24.1.0
         uses: actions/setup-node@v4
         with:
           node-version: '24.1.0'
-          cache: 'npm' # Optional: Nutzt npm-Caching, um Installationszeiten zu verkürzen
+          cache: 'npm'
 
-      # Schritt 3: Husky prepare script für CI-Builds entfernen
-      # Dieser Schritt muss KEINEN Fehler verursachen, wenn das Skript nicht gefunden wird
-      - name: Remove husky prepare script for CI
-        run: |
-          # Überprüfen, ob das prepare-Skript existiert und es dann entfernen
-          if grep -q '"prepare": "husky install"' package.json; then
-            sed -i '/"prepare": "husky install"/d' package.json
-            echo "Removed 'prepare' script from package.json for CI build."
-          fi
-        continue-on-error: true # Wichtig, falls das Skript bereits fehlt oder der grep-Befehl fehlschlägt
-
-      # Schritt 4: Node.js-Abhängigkeiten installieren
-      # 'npm ci' ist optimal für CI/CD: Es installiert genau die Versionen aus package-lock.json.
+      # WICHTIG: DER VORHERIGE "Remove husky prepare script for CI" SCHRITT WIRD HIER ENTFERNT!
+      # Schritt 3: Node.js-Abhängigkeiten installieren
+      # 'npm ci' ist optimal für CI/CD.
+      # Die Umgebungsvariable HUSKY=0 sollte hier reichen, um den Aufruf zu unterdrücken.
       - name: Install dependencies
         run: npm ci
+        env:
+          HUSKY: 0 # <-- Stellt sicher, dass Husky die Installation der Hooks überspringt
 
-      # Schritt 5: Angular-Anwendung bauen
-      # Dieser Befehl kompiliert Ihre Angular-App und erstellt den 'dist'-Ordner mit den statischen Assets.
       - name: Build Angular application
         run: npm run build # Oder direkt: ng build --configuration production
 
-      # Schritt 6: Auf Azure Static Web Apps bereitstellen
-      # Die Action lädt die bereits gebauten Dateien hoch.
-      # 'skip_app_build: true' ist hier korrekt, da wir die App zuvor manuell gebaut haben.
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
-          # Der API-Token aus den GitHub-Secrets
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_SEA_09AE0D803 }}
           action: 'upload'
-          # app_location: Der Pfad zum Stammverzeichnis Ihrer Anwendung relativ zum Root des Repos.
-          # Hier ist das der Root, da package.json und src/app/app.ts direkt darin liegen.
           app_location: '/'
-          # output_location: Der Pfad zu den kompilierten statischen Dateien nach dem Build-Schritt.
-          # Dies muss genau dem Pfad entsprechen, den 'ng build' erzeugt.
           output_location: 'dist/angular-blog-app-daniel-wuester/browser'
-          # Deaktiviert den internen Build-Prozess der Azure SWA Action,
-          # da wir unseren eigenen Build-Schritt oben definiert haben.
           skip_app_build: true
-          # api_location: "" # Falls Sie eine Azure Functions API hätten, hier den Pfad angeben (z.B. "api")
 
   close_pull_request_job:
-    # Dieser Job wird ausgeführt, wenn ein Pull Request geschlossen wird.
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     name: Close Pull Request Job
@@ -80,7 +55,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_SEA_09AE0D803 }}
           action: 'close'
-          # Die folgenden Pfade sind hier irrelevant, da nur geschlossen wird.
           app_location: '/'
-          # api_location: ""
-          # output_location: ""
