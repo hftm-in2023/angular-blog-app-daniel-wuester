@@ -24,17 +24,13 @@ jobs:
           node-version: '24.1.0'
           cache: 'npm'
 
-      # WICHTIG: DER VORHERIGE "Remove husky prepare script for CI" SCHRITT WIRD HIER ENTFERNT!
       # Schritt 3: Node.js-Abhängigkeiten installieren
-      # 'npm ci' ist optimal für CI/CD.
-      # Die Umgebungsvariable HUSKY=0 sollte hier reichen, um den Aufruf zu unterdrücken.
+      # WICHTIG: 'npm ci --ignore-scripts' wird das Husky-Problem beheben.
       - name: Install dependencies
-        run: npm ci
-        env:
-          HUSKY: 0 # <-- Stellt sicher, dass Husky die Installation der Hooks überspringt
+        run: npm ci --ignore-scripts # <-- HIER IST DIE KRITISCHE ÄNDERUNG!
 
       - name: Build Angular application
-        run: npm run build # Oder direkt: ng build --configuration production
+        run: npm run build # Dieser Schritt wird immer noch normal ausgeführt
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
