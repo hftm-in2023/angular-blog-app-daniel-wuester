@@ -27,7 +27,7 @@
 
 3. **Abhängigkeiten installieren**
    ```bash
-   nvm ci
+   npm ci
    ```
 
 4. **Projekt builden**
