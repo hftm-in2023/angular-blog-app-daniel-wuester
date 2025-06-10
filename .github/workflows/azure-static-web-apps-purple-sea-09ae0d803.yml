@@ -32,6 +32,8 @@ jobs:
       # 'npm ci' ist optimal für CI/CD: Es installiert genau die Versionen aus package-lock.json.
       - name: Install dependencies
         run: npm ci
+        env:
+          HUSKY: 0
 
       # Schritt 4: Angular-Anwendung bauen
       # Dieser Befehl kompiliert Ihre Angular-App und erstellt den 'dist'-Ordner mit den statischen Assets.
