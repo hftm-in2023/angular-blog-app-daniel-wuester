@@ -1,102 +1,51 @@
-<mat-toolbar color="primary">
-  <mat-icon>dashboard</mat-icon>
-  <span>{{ title }}</span>
-</mat-toolbar>
+<!-- Formular zum Erstellen eines neuen Blogeintrags -->
+<mat-card class="demo-card">
+  <mat-card-header>
+    <mat-card-title>Neuen Blogeintrag erstellen</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-form-field class="full-width" appearance="fill">
+      <mat-label>Titel</mat-label>
+      <input matInput [(ngModel)]="newBlog.title" placeholder="Titel des Blogs" />
+    </mat-form-field>
 
-<div class="container">
-  <mat-card class="demo-card">
-    <mat-card-header>
-      <mat-card-title>Event Binding (Button-Klicks)</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <button mat-raised-button color="accent" (click)="onButtonClick()">
-        Klick mich!
-      </button>
-      <p>Button wurde {{ buttonClickedCount }} Mal geklickt.</p>
-    </mat-card-content>
-  </mat-card>
+    <mat-form-field class="full-width" appearance="fill">
+      <mat-label>Autor</mat-label>
+      <input matInput [(ngModel)]="newBlog.author" placeholder="Dein Name" />
+    </mat-form-field>
 
-  <mat-card class="demo-card">
-    <mat-card-header>
-      <mat-card-title>&#64;if und &#64;switch</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-slide-toggle [(ngModel)]="isContentVisible" color="primary">
-        Inhalt anzeigen/ausblenden
-      </mat-slide-toggle>
+    <mat-form-field class="full-width" appearance="fill">
+      <mat-label>Inhalt</mat-label>
+      <textarea matInput [(ngModel)]="newBlog.content" placeholder="Inhalt deines Blogeintrags"></textarea>
+    </mat-form-field>
 
-      <p *ngIf="isContentVisible; else elseContent">Dieser Inhalt ist sichtbar (dank *ngIf).</p>
-      <ng-template #elseContent>
-        <p>Dieser Inhalt ist ausgeblendet (dank *ngIf else).</p>
-      </ng-template>
+    <button mat-raised-button color="primary" (click)="submitBlog()">
+      Speichern
+    </button>
+  </mat-card-content>
+</mat-card>
 
-      <mat-radio-group [(ngModel)]="selectedOption" class="radio-group">
-        <mat-radio-button value="option1">Option 1</mat-radio-button>
-        <mat-radio-button value="option2">Option 2</mat-radio-button>
-        <mat-radio-button value="option3">Option 3</mat-radio-button>
-      </mat-radio-group>
-
-      <div [ngSwitch]="selectedOption">
-        <p *ngSwitchCase="'option1'">Sie haben Option 1 gewählt.</p>
-        <p *ngSwitchCase="'option2'">Sie haben Option 2 gewählt.</p>
-        <p *ngSwitchCase="'option3'">Sie haben Option 3 gewählt.</p>
-        <p *ngSwitchDefault>Keine Option gewählt.</p>
+<!-- Liste der vorhandenen Blogs -->
+<mat-card class="demo-card">
+  <mat-card-header>
+    <mat-card-title>Blogs</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <ng-container *ngIf="blogs.length > 0; else noBlogs">
+      <div class="blog-list">
+        @for (blog of blogs; track blog.id) {
+          <mat-card class="blog-card">
+            <mat-card-title>{{ blog.title }}</mat-card-title>
+            <mat-card-subtitle>von {{ blog.author }} am {{ blog.createdAt | date }}</mat-card-subtitle>
+            <mat-card-content>
+              <p>{{ blog.content }}</p>
+            </mat-card-content>
+          </mat-card>
+        }
       </div>
-    </mat-card-content>
-  </mat-card>
-
-  <mat-card class="demo-card">
-    <mat-card-header>
-      <mat-card-title>&#64;for-Schleife</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-list>
-        <ng-container *ngFor="let user of users; trackBy: userById">
-          <mat-list-item>
-            <mat-icon matListItemIcon>person</mat-icon>
-            <div matListItemTitle>{{ user.name }}</div>
-            <div matListItemLine>ID: {{ user.id }}</div>
-            <div matListItemLine>Status: {{ user.isActive ? 'Aktiv' : 'Inaktiv' }}</div>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-        </ng-container>
-        <p *ngIf="users.length === 0">Keine Benutzer vorhanden.</p>
-      </mat-list>
-    </mat-card-content>
-  </mat-card>
-
-  <mat-card class="demo-card">
-    <mat-card-header>
-      <mat-card-title>NgClass und NgStyle</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p [ngStyle]="{'color': messageColor, 'font-weight': 'bold'}">
-        Dies ist eine Nachricht mit NgStyle.
-      </p>
-      <button mat-raised-button color="primary" (click)="messageColor = (messageColor === 'blue' ? 'red' : 'blue')">
-        Farbe wechseln
-      </button>
-
-      <p [ngClass]="{'highlight': isHighlighted, 'bold-text': true}">
-        Dieser Text verwendet NgClass.
-      </p>
-      <button mat-raised-button color="primary" (click)="toggleHighlight()">
-        Hervorheben
-      </button>
-    </mat-card-content>
-  </mat-card>
-
-  <mat-card class="demo-card">
-    <mat-card-header>
-      <mat-card-title>NgModel (2-Way Binding)</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label for="twoWayInput">Geben Sie Text ein</mat-label>
-        <input matInput [(ngModel)]="twoWayBindingText" id="twoWayInput" placeholder="Hier Text eingeben">
-      </mat-form-field>
-
-      <p>Eingegebener Text: <strong>{{ twoWayBindingText }}</strong></p>
-    </mat-card-content>
-  </mat-card>
-</div>
+    </ng-container>
+    <ng-template #noBlogs>
+      <p>Keine Blogeinträge vorhanden</p>
+    </ng-template>
+  </mat-card-content>
+</mat-card>

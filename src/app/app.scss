@@ -1,4 +1,3 @@
-/* Ersetzen Sie den vorhandenen Inhalt in app.scss mit diesem */
 .container {
   padding: 20px;
   display: flex;
@@ -35,4 +34,16 @@
 
 .full-width {
   width: 100%;
+  margin-bottom: 1rem;
+}
+
+.blog-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.blog-card {
+  flex: 1 1 calc(50% - 1rem);
+  min-width: 300px;
 }
