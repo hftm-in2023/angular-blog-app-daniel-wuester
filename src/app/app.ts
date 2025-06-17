@@ -36,10 +36,10 @@ interface User {
     MatSlideToggleModule,
     MatRadioModule,
     MatListModule,
-    MatDividerModule
+    MatDividerModule,
   ],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
 export class AppComponent {
   protected title = 'Angular Material Demo App von Daniel Wüster';
@@ -50,7 +50,7 @@ export class AppComponent {
   users: User[] = [
     { id: 1, name: 'Alice', isActive: true },
     { id: 2, name: 'Bob', isActive: false },
-    { id: 3, name: 'Charlie', isActive: true }
+    { id: 3, name: 'Charlie', isActive: true },
   ];
   messageColor = 'blue';
   isHighlighted = false;
@@ -62,7 +62,7 @@ export class AppComponent {
   newBlog: Partial<Blog> = {
     title: '',
     content: '',
-    author: ''
+    author: '',
   };
 
   constructor(private blogService: BlogService) {
@@ -71,30 +71,33 @@ export class AppComponent {
 
   loadBlogs(): void {
     this.blogService.getBlogs().subscribe({
-      next: (data) => this.blogs = data,
-      error: (err) => console.error('Fehler beim Laden der Blogs:', err)
+      next: (response: any) => {
+        console.log('Empfangene Blogs:', response);
+        this.blogs = response.data; // <-- das ist die Änderung
+      },
+      error: (err) => console.error('Fehler beim Laden der Blogs:', err),
     });
   }
 
-  submitBlog(): void {
-    if (this.newBlog.title && this.newBlog.content && this.newBlog.author) {
-      const blog: Blog = {
-        id: 0, // wird vom Backend ignoriert
-        title: this.newBlog.title,
-        content: this.newBlog.content,
-        author: this.newBlog.author,
-        createdAt: new Date().toISOString()
-      };
+  // submitBlog(): void {
+  //   if (this.newBlog.title && this.newBlog.content && this.newBlog.author) {
+  //     const blog: Blog = {
+  //       id: 0, // wird vom Backend ignoriert
+  //       title: this.newBlog.title,
+  //       content: this.newBlog.content,
+  //       author: this.newBlog.author,
+  //       createdAt: new Date().toISOString(),
+  //     };
 
-      this.blogService.addBlog(blog).subscribe({
-        next: (savedBlog) => {
-          this.blogs.push(savedBlog);
-          this.newBlog = { title: '', content: '', author: '' };
-        },
-        error: (err) => console.error('Fehler beim Speichern:', err)
-      });
-    }
-  }
+  //     this.blogService.addBlog(blog).subscribe({
+  //       next: (savedBlog) => {
+  //         this.blogs.push(savedBlog);
+  //         this.newBlog = { title: '', content: '', author: '' };
+  //       },
+  //       error: (err) => console.error('Fehler beim Speichern:', err),
+  //     });
+  //   }
+  // }
 
   onButtonClick(): void {
     this.buttonClickedCount++;

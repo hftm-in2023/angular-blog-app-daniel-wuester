@@ -15,7 +15,7 @@ export interface Blog {
   providedIn: 'root'
 })
 export class BlogService {
-private readonly apiUrl = 'https://d-cap-blog-backend---v2.whitepond-b96fee4b.westeurope.azurecontainerapps.io/blogs';
+private readonly apiUrl = 'https://d-cap-blog-backend---v2.whitepond-b96fee4b.westeurope.azurecontainerapps.io/entries';
 
   constructor(private http: HttpClient) {}
 
