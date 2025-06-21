@@ -1,8 +1,3 @@
-permissions:
-  contents: read
-  pull-requests: write
-  id-token: write
-
 name: Azure Static Web Apps CI/CD
 
 on:
@@ -10,15 +5,20 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize, reopened, closed]
     branches:
       - main
 
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]' # ⛔ Skip Deploy für Dependabot
     name: Build and Deploy Job
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -32,17 +32,11 @@ jobs:
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
+      - name: Run tests
+        run: npm test
+
       - name: Build Angular application
         run: npm run build
-
-      # ✅ Debug: Testet, ob Secret vorhanden ist
-      - name: Debug Azure Token
-        run: |
-          if [ -z "${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_SEA_09AE0D803 }}" ]; then
-            echo "::error::Secret is NOT present"
-          else
-            echo "✅ Secret was passed correctly"
-          fi
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
@@ -52,8 +46,9 @@ jobs:
           app_location: 'dist/angular-blog-app-daniel-wuester/browser'
           skip_app_build: true
 
+  # ✅ PR-Job zum Schließen (z.B. bei Preview-Umgebungen)
   close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     name: Close Pull Request Job
     steps:
