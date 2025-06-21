@@ -24,14 +24,13 @@ jobs:
           node-version: '24.1.0'
           cache: 'npm'
 
-          
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
       - name: Build Angular application
         run: npm run build
 
-      # ✅ 👉 HIER: Debug-Ausgabe, ob der Secret übergeben wird
+      # ✅ Debug: Testet, ob Secret vorhanden ist
       - name: Debug Azure Token
         run: |
           if [ -z "${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_SEA_09AE0D803 }}" ]; then
@@ -39,22 +38,6 @@ jobs:
           else
             echo "✅ Secret was passed correctly"
           fi
-
-      - name: Deploy to Azure Static Web Apps
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_SEA_09AE0D803 }}
-          action: 'upload'
-          app_location: 'dist/angular-blog-app-daniel-wuester/browser'
-          skip_app_build: true
-
-      # Schritt 3: Node.js-Abhängigkeiten installieren
-      # WICHTIG: 'npm ci --ignore-scripts' wird das Husky-Problem beheben.
-      - name: Install dependencies
-        run: npm ci --ignore-scripts # <-- HIER IST DIE KRITISCHE ÄNDERUNG!
-
-      - name: Build Angular application
-        run: npm run build # Dieser Schritt wird immer noch normal ausgeführt
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
