@@ -149,3 +149,35 @@ Damit du und andere:
 - **✅ Du kannst diese Erfahrung in Lebenslauf oder Bewerbung erwähnen**
 - **✅ Du weißt jetzt, wie man von „nur auf meinem PC“ zu „für alle online“ kommt 💪**
 
+## 📦 Sprint-Dokumentation
+
+### Sprint 1 – Daten laden und anzeigen
+
+- Anbindung des bereitgestellten Backends (`/entries`)
+- Implementierung eines `BlogService` zur Kommunikation mit dem Backend
+- Anzeige aller Blogs auf der Startseite mit `@for`
+- Verwendung von Angular Control Flow Syntax (`*ngIf`, `*ngFor`)
+- Responsive Darstellung mit `Flexbox` und Angular Material (`mat-card`)
+- Git Branch: `loading-data`
+- Pull Request: #1 – abgeschlossen
+
+---
+
+### Sprint 2 – Detailseite, Fehlerbehandlung und Struktur
+
+- Einführung einer Feature-basierten Verzeichnisstruktur
+  - `features/blog-list/`
+  - `features/blog-detail/`
+  - `shared/models/`, `shared/services/`
+- Lazy Loading der Blog-Übersicht und Detailansicht
+- Umsetzung der Detailseite mit Anzeige von `id`, `title`, `author`, `content`, `createdAt`
+- Implementierung eines Angular Resolvers zur Vorab-Ladung von Blogdaten
+- Fehlerbehandlung bei ungültigen IDs mit Weiterleitung und `MatSnackBar`
+- Globaler `ErrorHandler`, der HTTP-Fehler abfängt und anzeigt
+- Schöner Zurück-Button auf der Detailseite (`mat-stroked-button` mit Icon)
+- Test-Fix in `app.spec.ts` für aktualisierte Toolbar
+- Git Branch: `feature/blog-detail`
+- Pull Request: #2 – abgeschlossen
+
+---
+
