@@ -1,0 +1,24 @@
+<h2>Blog Detail</h2>
+
+<ng-container *ngIf="blog; else notFound">
+    <mat-card>
+        <mat-card-title>{{ blog.title }}</mat-card-title>
+        <mat-card-subtitle>
+            von {{ blog.author }} am {{ blog.createdAt | date }}
+        </mat-card-subtitle>
+        <mat-card-content>
+            <p>{{ blog.content }}</p>
+        </mat-card-content>
+    </mat-card>
+    <mat-card-actions>
+        <button mat-stroked-button color="primary" (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+            Zurück
+        </button>
+    </mat-card-actions>
+
+</ng-container>
+
+<ng-template #notFound>
+    <p>Blogeintrag nicht gefunden.</p>
+</ng-template>

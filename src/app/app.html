@@ -1,53 +1,7 @@
-<h1>Hello, angular-blog-app-daniel-wuester</h1>
+<mat-toolbar color="primary">
+  <mat-icon>article</mat-icon>
+  <span>{{ title }}</span>
+</mat-toolbar>
 
-<!-- Formular zum Erstellen eines neuen Blogeintrags -->
-<mat-card class="demo-card">
-  <mat-card-header>
-    <mat-card-title>Neuen Blogeintrag erstellen</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <mat-form-field class="full-width" appearance="fill">
-      <mat-label>Titel</mat-label>
-      <input matInput [(ngModel)]="newBlog.title" placeholder="Titel des Blogs" />
-    </mat-form-field>
-
-    <mat-form-field class="full-width" appearance="fill">
-      <mat-label>Autor</mat-label>
-      <input matInput [(ngModel)]="newBlog.author" placeholder="Dein Name" />
-    </mat-form-field>
-
-    <mat-form-field class="full-width" appearance="fill">
-      <mat-label>Inhalt</mat-label>
-      <textarea matInput [(ngModel)]="newBlog.content" placeholder="Inhalt deines Blogeintrags"></textarea>
-    </mat-form-field>
-
-    <!-- <button mat-raised-button color="primary" (click)="submitBlog()">
-      Speichern
-    </button> -->
-  </mat-card-content>
-</mat-card>
-
-<!-- Liste der vorhandenen Blogs -->
-<mat-card class="demo-card">
-  <mat-card-header>
-    <mat-card-title>Blogs</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <ng-container *ngIf="blogs.length > 0; else noBlogs">
-      <div class="blog-list">
-        @for (blog of blogs; track blog.id) {
-          <mat-card class="blog-card">
-            <mat-card-title>{{ blog.title }}</mat-card-title>
-            <mat-card-subtitle>von {{ blog.author }} am {{ blog.createdAt | date }}</mat-card-subtitle>
-            <mat-card-content>
-              <p>{{ blog.content }}</p>
-            </mat-card-content>
-          </mat-card>
-        }
-      </div>
-    </ng-container>
-    <ng-template #noBlogs>
-      <p>Keine Blogeinträge vorhanden</p>
-    </ng-template>
-  </mat-card-content>
-</mat-card>
+<!-- Hier erscheinen BlogList oder BlogDetail via Lazy Routing -->
+<router-outlet></router-outlet>

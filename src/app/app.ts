@@ -13,7 +13,10 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 
-import { BlogService, Blog } from './blog.service';
+import { BlogService, Blog } from './shared/services/blog.service';
+import { RouterModule } from '@angular/router';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
 
 interface User {
   id: number;
@@ -37,6 +40,8 @@ interface User {
     MatRadioModule,
     MatListModule,
     MatDividerModule,
+    RouterModule,
+    MatSnackBarModule,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -73,31 +78,11 @@ export class AppComponent {
     this.blogService.getBlogs().subscribe({
       next: (response: any) => {
         console.log('Empfangene Blogs:', response);
-        this.blogs = response.data; // <-- das ist die Änderung
+        this.blogs = response.data;
       },
       error: (err) => console.error('Fehler beim Laden der Blogs:', err),
     });
   }
-
-  // submitBlog(): void {
-  //   if (this.newBlog.title && this.newBlog.content && this.newBlog.author) {
-  //     const blog: Blog = {
-  //       id: 0, // wird vom Backend ignoriert
-  //       title: this.newBlog.title,
-  //       content: this.newBlog.content,
-  //       author: this.newBlog.author,
-  //       createdAt: new Date().toISOString(),
-  //     };
-
-  //     this.blogService.addBlog(blog).subscribe({
-  //       next: (savedBlog) => {
-  //         this.blogs.push(savedBlog);
-  //         this.newBlog = { title: '', content: '', author: '' };
-  //       },
-  //       error: (err) => console.error('Fehler beim Speichern:', err),
-  //     });
-  //   }
-  // }
 
   onButtonClick(): void {
     this.buttonClickedCount++;
