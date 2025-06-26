@@ -42,7 +42,7 @@ jobs:
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_KIND_SMOKE_0CFA2B503 }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_DANIEL_STUDENT }}
           action: 'upload'
           app_location: 'dist/angular-blog-app-daniel-wuester/browser'
           skip_app_build: true
@@ -56,7 +56,7 @@ jobs:
       - name: Close Pull Request
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_KIND_SMOKE_0CFA2B503 }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_DANIEL_STUDENT }}
           action: 'close'
           app_location: '/'
   # ✅ Nur Tests für Dependabot PRs
