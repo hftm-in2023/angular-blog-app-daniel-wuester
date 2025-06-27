@@ -5,7 +5,7 @@ export const BlogSchema = z.object({
   title: z.string(),
   content: z.string(),
   author: z.string(),
-  createdAt: z.string().datetime()
+  createdAt: z.string().datetime().or(z.string())
 });
 
 export type Blog = z.infer<typeof BlogSchema>;
