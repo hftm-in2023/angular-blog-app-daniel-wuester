@@ -34,6 +34,7 @@
     "@angular/cli": "~20.1.5",
     "@angular/compiler-cli": "^20.1.6",
     "@types/jasmine": "~5.1.0",
+    "eslint": "^9.33.0",
     "husky": "^9.1.7",
     "jasmine-core": "~5.8.0",
     "karma": "~6.4.0",
@@ -43,11 +44,15 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "lint-staged": "^16.1.5",
     "prettier": "^3.6.2",
-    "typescript": "~5.8.0"
+    "typescript": "~5.8.0",
+    "typescript-eslint": "^8.39.0"
   },
   "lint-staged": {
-    "*.{ts,html,scss, js, json, md}": [
+    "*.{ts,js}": [
       "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{html,scss,md,json}": [
       "prettier --write"
     ]
   }

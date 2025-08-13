@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface Blog {
   id: number;
@@ -14,9 +15,9 @@ export interface Blog {
 @Injectable({
   providedIn: 'root',
 })
+@Injectable({ providedIn: 'root' })
 export class BlogService {
-  private readonly apiUrl =
-    'https://d-cap-blog-backend---v2.whitepond-b96fee4b.westeurope.azurecontainerapps.io/entries';
+  private readonly apiUrl = `${environment.apiBaseUrl}/entries`;
 
   constructor(private http: HttpClient) {}
 
