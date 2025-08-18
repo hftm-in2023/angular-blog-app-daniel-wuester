@@ -1,5 +1,5 @@
 const js = require('@eslint/js');
-const tseslint = require('typescript-eslint');              // <- liefert parser + plugin
+const tseslint = require('typescript-eslint');
 const angular = require('@angular-eslint/eslint-plugin');
 
 module.exports = [
@@ -15,7 +15,7 @@ module.exports = [
     },
     plugins: {
       '@angular-eslint': angular,
-      '@typescript-eslint': tseslint.plugin                 // <- WICHTIG: Plugin registrieren
+      '@typescript-eslint': tseslint.plugin
     },
     rules: {
       '@angular-eslint/directive-selector': 'off',
