@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface Blog {
   id: number;
@@ -15,20 +16,19 @@ export interface Blog {
   providedIn: 'root',
 })
 export class BlogService {
-  private readonly apiUrl =
-    'https://d-cap-blog-backend---v2.whitepond-b96fee4b.westeurope.azurecontainerapps.io/entries';
+  private readonly apiUrl = `${environment.apiBaseUrl}/entries`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private _http: HttpClient) {}
 
   getBlogs(): Observable<any> {
-    return this.http.get(this.apiUrl);
+    return this._http.get(this.apiUrl);
   }
 
   addBlog(blog: Blog): Observable<Blog> {
-    return this.http.post<Blog>(this.apiUrl, blog);
+    return this._http.post<Blog>(this.apiUrl, blog);
   }
 
   getBlogById(id: number): Observable<Blog> {
-    return this.http.get<Blog>(`${this.apiUrl}/${id}`);
+    return this._http.get<Blog>(`${this.apiUrl}/${id}`);
   }
 }

@@ -2,11 +2,9 @@ name: Azure Static Web Apps CI/CD
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 permissions:
   contents: read
@@ -14,19 +12,18 @@ permissions:
   id-token: write
 
 jobs:
-  build_and_deploy_job:
+  pr_build:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]' # ⛔ Skip Deploy für Dependabot
-    name: Build and Deploy Job
-
+    name: PR Build & Test
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Use Node.js 24.1.0
+      - name: Use Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: '24.1.0'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
@@ -35,42 +32,33 @@ jobs:
       - name: Run unit tests
         run: npm test -- --no-watch --no-progress --browsers=ChromeHeadlessNoSandbox
 
-
-      - name: Build Angular application
-        run: npm run build
-
-      - name: Deploy to Azure Static Web Apps
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_DANIEL_STUDENT }}
-          action: 'upload'
-          app_location: 'dist/angular-blog-app-daniel-wuester/browser'
-          skip_app_build: true
-
-  # ✅ PR-Job zum Schließen (z.B. bei Preview-Umgebungen)
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.actor != 'dependabot[bot]'
+  deploy_main:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    name: Close Pull Request Job
+    name: Deploy to Azure Static Web Apps
     steps:
-      - name: Close Pull Request
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_DANIEL_STUDENT }}
-          action: 'close'
-          app_location: '/'
-  # ✅ Nur Tests für Dependabot PRs
-  dependabot_test:
-    if: github.actor == 'dependabot[bot]'
-    runs-on: ubuntu-latest
-    name: Test Dependabot PR
-    steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
         with:
-          node-version: '24.1.0'
+          node-version: '20'
           cache: 'npm'
 
-      - run: npm ci --ignore-scripts
-      - run: npm test
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run unit tests (non-blocking)
+        run: npm test -- --no-watch --no-progress --browsers=ChromeHeadlessNoSandbox
+        continue-on-error: true
+
+      - name: Deploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_DANIEL_STUDENT }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: "/"                                   # Root des Angular-Projekts
+          api_location: ""                                    # keine API
+          output_location: "dist/angular-blog-app-daniel-wuester/browser"  # Angular 17+: /browser

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Blog } from '../../shared/models/blog.model';
 import { BlogService } from '../../shared/services/blog.service';
-import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 @Component({
   standalone: true,
   selector: 'app-blog-list',
-  imports: [CommonModule, RouterModule, MatCardModule, MatButtonModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, RouterLink],
   template: `
     <h2>Blogübersicht</h2>
 
@@ -20,12 +20,16 @@ import { MatButtonModule } from '@angular/material/button';
         <mat-card-subtitle>
           von {{ blog.author }} am {{ blog.createdAt | date }}
         </mat-card-subtitle>
+
         <mat-card-content>
-          <p *ngIf="blog.content; else noContent">{{ blog.content.substring(0, 120) }}...</p>
+          <ng-container *ngIf="blog.content; else noContent">
+            <p>{{ blog.content.slice(0, 120) }}...</p>
+          </ng-container>
           <ng-template #noContent>
             <p><em>(Kein Inhalt vorhanden)</em></p>
           </ng-template>
         </mat-card-content>
+
         <mat-card-actions>
           <button mat-raised-button color="primary" [routerLink]="['/blogs', blog.id]">
             Anzeigen

@@ -1,0 +1,37 @@
+const js = require('@eslint/js');
+const tseslint = require('typescript-eslint');
+const angular = require('@angular-eslint/eslint-plugin');
+const globals = require('globals');
+
+module.exports = [
+  js.configs.recommended,
+  {
+    files: ['**/*.ts'],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: __dirname,
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.es2021,
+      },
+    },
+    plugins: {
+      '@angular-eslint': angular,
+      '@typescript-eslint': tseslint.plugin,
+    },
+    rules: {
+      '@angular-eslint/directive-selector': 'off',
+      '@angular-eslint/component-selector': 'off',
+
+      'no-undef': 'off',
+
+      'no-console': 'off',
+
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+    },
+  },
+];

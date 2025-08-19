@@ -181,3 +181,27 @@ Damit du und andere:
 
 ---
 
+### ✅ Sprint 3 – Smart/Dumb Components, Validierung und Erweiterung
+
+#### 🔹 Smart/Dumb Design Pattern
+- Die `BlogDetailComponent` wurde in eine Smart-Komponente umgebaut, die Daten per Resolver lädt.
+- Die Darstellung übernimmt die Dumb-Komponente `BlogDetailViewComponent`, welche über `@Input()` den Blog erhält.
+- Die Komponenten sind getrennt in `features/blog-detail/` und `features/blog-detail/components/` strukturiert.
+
+#### 🔹 Datenvalidierung mit Zod
+- Das `BlogSchema` wurde mit der Bibliothek [Zod](https://github.com/colinhacks/zod) erstellt.
+- Die Typen werden automatisch über `z.infer<typeof BlogSchema>` abgeleitet.
+- Validierung erfolgt im `BlogDetailResolver`, wo ungültige Daten mit einem Error abgefangen werden.
+- Bei ungültigen Daten erfolgt eine Weiterleitung zurück zur Übersicht + Anzeige einer `MatSnackBar`-Meldung.
+- Schema und Typen sind in `shared/models/blog.schema.ts` ausgelagert und können via Alias `@models/...` importiert werden.
+
+#### 🔹 Interceptor mit Correlation-ID
+- In `shared/interceptors/correlation-id.interceptor.ts` wurde ein globaler `HttpInterceptor` implementiert.
+- Dieser fügt jeder HTTP-Anfrage einen Header `X-Correlation-Id` mit einer zufälligen UUID hinzu.
+- Der Interceptor ist global registriert über `app.config.ts`.
+
+#### 🔹 Technik & Struktur
+- Nutzung von `inject()` zur klaren Abhängigkeitsverwaltung im Resolver
+- Tests wurd
+
+
