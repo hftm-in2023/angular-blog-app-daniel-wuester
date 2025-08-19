@@ -12,11 +12,10 @@ permissions:
   id-token: write
 
 jobs:
-  build_and_deploy_job:
+  pr_build:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]'
-    name: Build and Deploy Job
-
+    name: PR Build & Test
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -30,43 +29,36 @@ jobs:
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
-      # Optional – wenn flaky, zunächst deaktivieren oder continue-on-error: true
       - name: Run unit tests
+        run: npm test -- --no-watch --no-progress --browsers=ChromeHeadlessNoSandbox
+
+  deploy_main:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    name: Deploy to Azure Static Web Apps
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run unit tests (non-blocking)
         run: npm test -- --no-watch --no-progress --browsers=ChromeHeadlessNoSandbox
         continue-on-error: true
 
-      # Kein eigener Build nötig – die SWA Action baut
-      - name: Deploy to Azure Static Web Apps
+      - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_DANIEL_STUDENT }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          app_location: "/"                        # Root deines Angular-Projekts
-          api_location: ""                         # falls keine API
+          app_location: "/"                                   # Root des Angular-Projekts
+          api_location: ""                                    # keine API
           output_location: "dist/angular-blog-app-daniel-wuester/browser"  # Angular 17+: /browser
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.actor != 'dependabot[bot]'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: Close Pull Request
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_DANIEL_STUDENT }}
-          action: close
-          app_location: "/"
-
-  dependabot_test:
-    if: github.actor == 'dependabot[bot]'
-    runs-on: ubuntu-latest
-    name: Test Dependabot PR
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm ci --ignore-scripts
-      - run: npm test
