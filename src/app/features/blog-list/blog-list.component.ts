@@ -1,21 +1,35 @@
-import { Component, OnInit } from '@angular/core';
-import { Blog } from '../../shared/models/blog.model';
-import { BlogService } from '../../shared/services/blog.service';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 
+import { BlogStore } from '../../state/blog.store';
+import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
+
 @Component({
   standalone: true,
   selector: 'app-blog-list',
-  imports: [CommonModule, MatCardModule, MatButtonModule, RouterLink],
+  imports: [
+    CommonModule,
+    NgIf,
+    NgFor,
+    MatCardModule,
+    MatButtonModule,
+    RouterLink,
+    SpinnerComponent,
+  ],
+
   template: `
     <h2>Blogübersicht</h2>
 
-    <div class="blog-list" *ngIf="blogs.length > 0; else noBlogs">
-      <mat-card class="blog-card" *ngFor="let blog of blogs">
+    <!-- Loading -->
+    <app-spinner *ngIf="loading()"></app-spinner>
+
+    <!-- Liste -->
+    <div class="blog-list" *ngIf="!loading() && blogs().length > 0; else noBlogs">
+      <mat-card class="blog-card" *ngFor="let blog of blogs()">
         <mat-card-title>{{ blog.title }}</mat-card-title>
         <mat-card-subtitle>
           von {{ blog.author }} am {{ blog.createdAt | date }}
@@ -57,19 +71,15 @@ import { MatButtonModule } from '@angular/material/button';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BlogListComponent implements OnInit {
-  blogs: Blog[] = [];
+export class BlogListComponent {
+  private readonly store = inject(BlogStore);
 
-  constructor(private blogService: BlogService) {}
+  blogs = this.store.entities;
+  loading = this.store.loading;
 
-  ngOnInit(): void {
-    this.blogService.getBlogs().subscribe({
-      next: (res: any) => {
-        console.log('Antwort vom Backend:', res);
-        this.blogs = res.data;
-      },
-      error: (err) => console.error('Fehler beim Laden:', err),
-    });
+  ngOnInit() {
+    this.store.loadAll;
   }
 }

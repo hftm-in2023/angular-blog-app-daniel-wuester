@@ -1,32 +1,41 @@
-import { Component, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Blog } from '../../shared/models/blog.model';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { BlogStore } from '../../state/blog.store';
+import { BlogDetailViewComponent } from './components/blog-detail-view.component';
+import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
+
 import { MatIconModule } from '@angular/material/icon';
-import * as _DetailView from './components/blog-detail-view.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  standalone: true,
   selector: 'app-blog-detail',
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    _DetailView.BlogDetailViewComponent,
-  ],
+  standalone: true,
+  imports: [NgIf, BlogDetailViewComponent, SpinnerComponent, MatIconModule, MatButtonModule],
   templateUrl: './blog-detail.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlogDetailComponent {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly store = inject(BlogStore);
 
-  // Resolver-Daten ins Feld schreiben:
-  blog: Blog | undefined = this.route.snapshot.data['blog'] as Blog;
+  loading = this.store.loading;
+  blog = this.store.selected;
 
-  goBack(): void {
-    this.router.navigate(['/']); // oder '/blogs'
+  // Route → Auswahl
+  private id = toSignal(this.route.paramMap, { initialValue: null as any });
+
+  ngOnInit() {
+    // Falls Liste noch nicht geladen → laden
+    this.store.loadAll();
+
+    // id aus URL übernehmen
+    const blogId = this.route.snapshot.paramMap.get('id');
+    this.store.select(blogId);
+  }
+
+  goBack() {
+    history.back();
   }
 }
