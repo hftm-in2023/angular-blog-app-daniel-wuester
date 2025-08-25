@@ -1,7 +1,7 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core'; // importProvidersFrom hinzufügen
+import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms'; // FormsModule importieren
+import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
@@ -19,6 +19,6 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(HttpClientModule, FormsModule),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     { provide: HTTP_INTERCEPTORS, useClass: LoggingInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: CorrelationIdInterceptor, multi: true},
+    { provide: HTTP_INTERCEPTORS, useClass: CorrelationIdInterceptor, multi: true },
   ],
 };

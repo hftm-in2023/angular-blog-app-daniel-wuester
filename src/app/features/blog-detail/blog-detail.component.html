@@ -3,8 +3,12 @@
   Zurück
 </button>
 
-<ng-container *ngIf="blog; else notFound">
-  <app-blog-detail-view [blog]="blog"></app-blog-detail-view>
+<app-spinner *ngIf="loading()"></app-spinner>
+
+<ng-container *ngIf="!loading()">
+  <ng-container *ngIf="blog() as b; else notFound">
+    <app-blog-detail-view [blog]="b"></app-blog-detail-view>
+  </ng-container>
 </ng-container>
 
 <ng-template #notFound>

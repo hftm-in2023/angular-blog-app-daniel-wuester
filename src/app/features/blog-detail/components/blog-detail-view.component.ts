@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Blog } from '../../../shared/models/blog.model';
 
@@ -8,15 +8,16 @@ import { Blog } from '../../../shared/models/blog.model';
   selector: 'app-blog-detail-view',
   imports: [CommonModule, MatCardModule],
   template: `
-    <mat-card *ngIf="blog">
-      <mat-card-title>{{ blog.title }}</mat-card-title>
-      <mat-card-subtitle> von {{ blog.author }} am {{ blog.createdAt | date }} </mat-card-subtitle>
+    <mat-card *ngIf="blog() as b">
+      <mat-card-title>{{ b.title }}</mat-card-title>
+      <mat-card-subtitle> von {{ b.author }} am {{ b.createdAt | date }} </mat-card-subtitle>
       <mat-card-content>
-        <p>{{ blog.content }}</p>
+        <p>{{ b.content }}</p>
       </mat-card-content>
     </mat-card>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlogDetailViewComponent {
-  @Input() blog!: Blog;
+  blog = input.required<Blog>();
 }
