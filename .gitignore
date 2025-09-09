@@ -42,3 +42,7 @@ Thumbs.db
 
 # Angular build output
 /dist
+
+# Local Keycloak artifacts
+keycloak-11.0.3/
+keycloak-11.0.3.zip
