@@ -1,4 +1,14 @@
 export const environment = {
-  production: false,
+  production: true,
   apiBaseUrl: 'https://d-cap-blog-backend---v2.whitepond-b96fee4b.westeurope.azurecontainerapps.io',
+  auth: {
+    authority: 'https://<dein-keycloak-azure>/realms/<dein-realm>',
+    clientId: 'angular-blog-app',
+    redirectUrl: window.location.origin,
+    postLogoutRedirectUri: window.location.origin,
+    scope: 'openid profile email',
+    responseType: 'code',
+    silentRenew: true,
+    useRefreshToken: true,
+  },
 };
