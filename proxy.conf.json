@@ -1,0 +1,8 @@
+{
+  "/entries": {
+    "target": "http://localhost:9091",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

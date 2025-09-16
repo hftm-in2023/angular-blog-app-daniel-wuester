@@ -1,8 +1,8 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://localhost:8080/api',
+  apiBaseUrl: 'https://d-cap-blog-backend---v2.whitepond-b96fee4b.westeurope.azurecontainerapps.io',
   auth: {
-    authority: 'http://localhost:9080/realms/hftm',
+    authority: 'http://localhost:8080/auth/realms/hftm/',
     clientId: 'angular-blog-app',
     redirectUrl: window.location.origin,
     postLogoutRedirectUri: window.location.origin,

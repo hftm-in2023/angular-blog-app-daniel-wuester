@@ -1,16 +1,24 @@
-<button mat-stroked-button color="primary" (click)="goBack()">
-  <mat-icon>arrow_back</mat-icon>
-  Zurück
-</button>
-
-<app-spinner *ngIf="loading()"></app-spinner>
-
-<ng-container *ngIf="!loading()">
-  <ng-container *ngIf="blog() as b; else notFound">
-    <app-blog-detail-view [blog]="b"></app-blog-detail-view>
-  </ng-container>
+<ng-container *ngIf="loading(); else contentTpl">
+  <app-spinner></app-spinner>
 </ng-container>
 
-<ng-template #notFound>
-  <p>Blogeintrag nicht gefunden.</p>
+<ng-template #contentTpl>
+  <ng-container *ngIf="blog() as b; else emptyTpl">
+    <app-blog-detail-view [blog]="b"></app-blog-detail-view>
+
+    <div style="margin-top: 12px">
+      <button mat-stroked-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Zurück
+      </button>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyTpl>
+    <p>Kein Blog gefunden.</p>
+    <button mat-stroked-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Zurück
+    </button>
+  </ng-template>
 </ng-template>
