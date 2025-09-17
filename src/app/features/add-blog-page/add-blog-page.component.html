@@ -1,0 +1,57 @@
+<form [formGroup]="formTyped" (ngSubmit)="onSubmit()">
+  <div class="blog-input">
+    @if (hasError()) {
+      <div class="error-message">
+        <mat-icon>error</mat-icon>
+        Oops, der Blog konnte nicht gespeichert werden. Bitte später erneut versuchen.
+        <div class="error-detail">{{ errorMsg() }}</div>
+      </div>
+    }
+
+    <div class="button-group">
+      <button
+        type="submit"
+        class="submit-button"
+        mat-raised-button
+        color="primary"
+        [disabled]="submitDisabled()"
+      >
+        Publish blog
+      </button>
+
+      <button type="button" mat-raised-button color="secondary" (click)="onReset()">Reset</button>
+    </div>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Title</mat-label>
+      <input matInput formControlName="title" placeholder="Blog title" aria-label="Blog title" />
+      <mat-error>
+        @if (titleCtrl().hasError('required')) {
+          <span>Title is required</span>
+        } @else if (titleCtrl().hasError('minlength')) {
+          <span>Title must be at least 2 characters long</span>
+        } @else if (titleCtrl().hasError('pattern')) {
+          <span>Title must start with a capital letter</span>
+        }
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Tell your story...</mat-label>
+      <textarea
+        matInput
+        rows="18"
+        formControlName="content"
+        placeholder="Write your blog content"
+        aria-label="Blog content"
+      ></textarea>
+      <mat-error>
+        @if (contentCtrl().hasError('required')) {
+          <span>Content is required</span>
+        } @else if (contentCtrl().hasError('minlength')) {
+          <span>Content must be at least 5 characters long</span>
+        }
+      </mat-error>
+    </mat-form-field>
+  </div>
+</form>

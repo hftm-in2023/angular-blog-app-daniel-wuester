@@ -1,34 +1,38 @@
-// blog.service.ts
+// src/app/shared/services/blog.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { map, Observable } from 'rxjs';
+import { Blog } from '../../shared/models/blog.model';
 
-export interface Blog {
-  id: number;
-  title: string;
-  content: string;
-  author: string;
-  createdAt: string;
-}
-
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class BlogService {
-  private readonly apiUrl = `${environment.apiBaseUrl}/entries`;
+  private readonly apiUrl = '/entries'; // <- RELATIV, damit der Proxy greift
 
-  constructor(private _http: HttpClient) {}
+  constructor(private readonly _http: HttpClient) {}
 
-  getBlogs(): Observable<any> {
-    return this._http.get(this.apiUrl);
-  }
+  private toBlog = (raw: any): Blog => ({
+    id: Number(raw.id),
+    title: String(raw.title ?? ''),
+    content: String(raw.content ?? ''),
+    author: String(raw.author ?? 'Unknown'),
+    createdAt: String(raw.createdAt ?? new Date().toISOString()),
+  });
 
-  addBlog(blog: Blog): Observable<Blog> {
-    return this._http.post<Blog>(this.apiUrl, blog);
+  getBlogs(): Observable<Blog[]> {
+    return this._http.get<any[]>(this.apiUrl).pipe(map((items) => items.map(this.toBlog)));
   }
 
   getBlogById(id: number): Observable<Blog> {
-    return this._http.get<Blog>(`${this.apiUrl}/${id}`);
+    return this._http.get<any>(`${this.apiUrl}/${id}`).pipe(map(this.toBlog));
+  }
+
+  addBlog(blog: Pick<Blog, 'title' | 'content'>): Observable<Blog> {
+    const payload = {
+      title: blog.title,
+      content: blog.content,
+      author: 'Unknown',
+      createdAt: new Date().toISOString(),
+    };
+    return this._http.post<any>(this.apiUrl, payload).pipe(map(this.toBlog));
   }
 }

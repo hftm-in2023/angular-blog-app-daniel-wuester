@@ -3,7 +3,7 @@ import { BlogDetailComponent } from './blog-detail.component';
 
 export const blogDetailRoutes: Routes = [
   {
-    path: ':id',
+    path: '',
     component: BlogDetailComponent,
   },
 ];
