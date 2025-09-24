@@ -3,10 +3,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { Blog } from '../../shared/models/blog.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class BlogService {
-  private readonly apiUrl = '/entries'; // <- RELATIV, damit der Proxy greift
+  private readonly apiUrl = `${environment.apiBaseUrl}/entries`; // <- RELATIV, damit der Proxy greift
 
   constructor(private readonly _http: HttpClient) {}
 
@@ -19,7 +20,7 @@ export class BlogService {
   });
 
   getBlogs(): Observable<Blog[]> {
-    return this._http.get<any[]>(this.apiUrl).pipe(map((items) => items.map(this.toBlog)));
+    return this._http.get<any>(this.apiUrl).pipe(map((items) => items.data.map(this.toBlog)));
   }
 
   getBlogById(id: number): Observable<Blog> {
