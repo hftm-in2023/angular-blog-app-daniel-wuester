@@ -15,13 +15,13 @@
         mat-list-item
         routerLink="/blogs"
         routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
         (click)="closeIfHandset(drawer)"
       >
         <mat-icon>list</mat-icon>
         <span>Alle Blogs</span>
       </a>
 
-      <!-- Sichtbar, sobald eingeloggt -->
       <a
         mat-list-item
         routerLink="/add-blog"
@@ -35,10 +35,8 @@
     </mat-nav-list>
 
     <div class="auth-actions">
-      <!-- Name nur anzeigen, wenn eingeloggt -->
       <span class="user" *ngIf="isAuthenticated()">{{ displayName() }}</span>
 
-      <!-- EIN Button für Login/Logout -->
       <button mat-stroked-button (click)="authToggle()" [disabled]="busy()">
         {{ isAuthenticated() ? 'Logout' : 'Login' }}
       </button>
@@ -47,13 +45,17 @@
 
   <mat-sidenav-content>
     <mat-toolbar color="primary">
-      <!-- Hamburger nur mobil -->
-      <button type="button" mat-icon-button (click)="drawer.toggle()" *ngIf="isHandset$ | async">
+      <button
+        type="button"
+        mat-icon-button
+        aria-label="Menü öffnen"
+        (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async"
+      >
         <mat-icon>menu</mat-icon>
       </button>
       <span class="spacer"></span>
 
-      <!-- Desktop-Buttons -->
       <a
         mat-flat-button
         color="accent"
@@ -64,7 +66,6 @@
         New Blog
       </a>
     </mat-toolbar>
-
     <div class="page-container">
       <router-outlet></router-outlet>
     </div>

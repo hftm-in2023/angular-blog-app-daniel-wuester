@@ -5,6 +5,12 @@ export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'blogs' },
 
   {
+    path: 'overview',
+    loadComponent: () =>
+      import('./features/overview/overview.component').then((m) => m.OverviewComponent),
+  },
+
+  {
     path: 'logged-out',
     loadComponent: () =>
       import('./core/logged-out/logged-out.component').then((m) => m.LoggedOutComponent),
