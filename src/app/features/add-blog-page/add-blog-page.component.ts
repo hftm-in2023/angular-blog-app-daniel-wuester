@@ -1,30 +1,15 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AddBlogService, CreatedBlog } from './add-blog.service';
-import { Router } from '@angular/router';
-
-type FormShape = {
-  title: FormControl<string>;
-  content: FormControl<string>;
-};
+import { AddBlogService } from './add-blog.service';
 
 @Component({
   standalone: true,
-  selector: 'app-add-blog-page',
+  selector: 'app-add-blog',
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -32,83 +17,60 @@ type FormShape = {
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatSnackBarModule,
   ],
   templateUrl: './add-blog-page.component.html',
-  styleUrls: ['./add-blog-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddBlogPageComponent {
-  private destroyRef = inject(DestroyRef);
-  private snack = inject(MatSnackBar);
-  private addBlogService = inject(AddBlogService);
-  private router = inject(Router);
+export class AddBlogComponent {
+  private fb = inject(FormBuilder);
+  private api = inject(AddBlogService);
 
-  readonly submitting = signal<boolean>(false);
-  readonly errorMsg = signal<string | null>(null);
-  readonly hasError = computed(() => !!this.errorMsg());
+  // UI-Status
+  private _busy = signal(false);
+  private _error = signal<string | null>(null);
 
-  readonly formTyped = new FormGroup<FormShape>({
-    title: new FormControl<string>('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.minLength(2), Validators.pattern('^[A-Z].*')],
+  // Form
+  formTyped = this.fb.nonNullable.group({
+    title: this.fb.nonNullable.control('', {
+      validators: [Validators.required, Validators.minLength(2), Validators.pattern(/^[A-Z].*/)],
     }),
-    content: new FormControl<string>('', {
-      nonNullable: true,
+    content: this.fb.nonNullable.control('', {
       validators: [Validators.required, Validators.minLength(5)],
     }),
   });
 
-  constructor() {
-    this.formTyped.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((v) => console.log('Form changed:', v));
+  // Template-Helfer (wie im HTML aufgerufen)
+  titleCtrl = () => this.formTyped.controls.title;
+  contentCtrl = () => this.formTyped.controls.content;
+  hasError = () => !!this._error();
+  errorMsg = () => this._error();
 
-    this.formTyped.statusChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((s) => console.log('Form status:', s));
-  }
-
-  submitDisabled() {
-    return this.submitting() || this.formTyped.invalid;
-  }
+  submitDisabled = computed(
+    () => this._busy() || this.formTyped.invalid || this.formTyped.pristine,
+  );
 
   async onSubmit() {
-    this.errorMsg.set(null);
-
-    if (this.formTyped.invalid) {
-      this.formTyped.markAllAsTouched();
-      return;
-    }
-
+    if (this.submitDisabled()) return;
+    this._error.set(null);
+    this._busy.set(true);
     try {
-      this.submitting.set(true);
-      const payload = this.formTyped.value as CreatedBlog;
-      await this.addBlogService.addBlog(payload);
-
-      this.snack.open('Blog erfolgreich veröffentlicht 🎉', 'OK', { duration: 2500 });
-
-      // optional: Formular leeren (wir navigieren eh gleich weg)
-      this.formTyped.reset({ title: '', content: '' });
-
-      // ➜ direkt zur Übersicht
-      this.router.navigate(['/blogs']);
-    } catch (e: unknown) {
-      const msg = (e as Error)?.message ?? 'Netzwerk-/Serverfehler';
-      this.errorMsg.set(msg);
-      this.snack.open('Speichern fehlgeschlagen. Bitte später erneut versuchen.', 'OK', {
-        duration: 4000,
+      await this.api.addBlog({
+        title: this.titleCtrl().value,
+        content: this.contentCtrl().value,
       });
+      // Erfolgreich → Formular leeren
+      this.formTyped.reset();
+    } catch (e: any) {
+      console.error('[AddBlog] POST failed', e);
+      const msg = e?.error?.message || e?.message || 'Unbekannter Fehler';
+      this._error.set(msg);
     } finally {
-      this.submitting.set(false);
+      this._busy.set(false);
     }
   }
 
   onReset() {
-    this.formTyped.reset({ title: '', content: '' });
-    this.errorMsg.set(null);
+    this._error.set(null);
+    this.formTyped.reset();
   }
-
-  titleCtrl = () => this.formTyped.get('title')!;
-  contentCtrl = () => this.formTyped.get('content')!;
 }

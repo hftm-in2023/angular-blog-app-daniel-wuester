@@ -1,7 +1,13 @@
 import { Routes } from '@angular/router';
+import { isAuthenticatedGuard } from './guards/is-authenticated';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'blogs' },
+  {
+    path: 'logged-out',
+    loadComponent: () =>
+      import('./core/logged-out/logged-out.component').then((m) => m.LoggedOutComponent),
+  },
   {
     path: 'blogs',
     loadChildren: () =>
@@ -14,8 +20,8 @@ export const routes: Routes = [
   },
   {
     path: 'add-blog',
-    loadChildren: () =>
-      import('./features/add-blog-page/add-blog.routes').then((m) => m.ADD_BLOG_ROUTES),
+    canActivate: [isAuthenticatedGuard],
+    loadChildren: () => import('./features/add-blog-page/add-blog.routes').then((m) => m.routes),
   },
   { path: '**', redirectTo: 'blogs' },
 ];

@@ -4,6 +4,6 @@
     "outDir": "./out-tsc/app",
     "types": []
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/app/core/logged-out"],
   "exclude": ["src/**/*.spec.ts"]
 }

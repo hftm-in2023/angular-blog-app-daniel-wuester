@@ -2,37 +2,51 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { Blog } from '../../shared/models/blog.model';
+import { environment } from '../../../environments/environment';
+import { Blog } from '../../shared/models/blog.model'; // <-- Model importieren
 
 @Injectable({ providedIn: 'root' })
 export class BlogService {
-  private readonly apiUrl = '/entries'; // <- RELATIV, damit der Proxy greift
+  private readonly apiUrl = `${environment.apiBase}/entries`; // Backend liefert /entries (ohne /api hinter dem Proxy)
 
   constructor(private readonly _http: HttpClient) {}
 
-  private toBlog = (raw: any): Blog => ({
-    id: Number(raw.id),
-    title: String(raw.title ?? ''),
-    content: String(raw.content ?? ''),
-    author: String(raw.author ?? 'Unknown'),
-    createdAt: String(raw.createdAt ?? new Date().toISOString()),
-  });
-
+  // Liste: Backend liefert { data: [...] } mit contentPreview (kein content)
   getBlogs(): Observable<Blog[]> {
-    return this._http.get<any[]>(this.apiUrl).pipe(map((items) => items.map(this.toBlog)));
+    return this._http
+      .get<{ data: any[] }>(this.apiUrl)
+      .pipe(map((res) => (res?.data ?? []).map((raw) => this.mapListItem(raw))));
   }
 
+  // Detail: Backend liefert i. d. R. das Objekt direkt ODER als { data: {...} }
   getBlogById(id: number): Observable<Blog> {
-    return this._http.get<any>(`${this.apiUrl}/${id}`).pipe(map(this.toBlog));
+    return this._http
+      .get<any>(`${this.apiUrl}/${id}`)
+      .pipe(map((res) => this.mapDetailItem(res?.data ?? res)));
   }
 
   addBlog(blog: Pick<Blog, 'title' | 'content'>): Observable<Blog> {
-    const payload = {
-      title: blog.title,
-      content: blog.content,
-      author: 'Unknown',
-      createdAt: new Date().toISOString(),
-    };
-    return this._http.post<any>(this.apiUrl, payload).pipe(map(this.toBlog));
+    const payload = { title: blog.title, content: blog.content ?? '' };
+    return this._http
+      .post<any>(this.apiUrl, payload)
+      .pipe(map((raw) => this.mapDetailItem(raw?.data ?? raw)));
   }
+
+  // --- Mapper ---
+  private mapListItem = (raw: any): Blog => ({
+    id: Number(raw?.id),
+    title: String(raw?.title ?? ''),
+    // Liste hat nur contentPreview -> als content verwenden, damit Typ passt
+    content: String(raw?.contentPreview ?? ''),
+    author: String(raw?.author ?? 'Unknown'),
+    createdAt: String(raw?.createdAt ?? new Date().toISOString()),
+  });
+
+  private mapDetailItem = (raw: any): Blog => ({
+    id: Number(raw?.id),
+    title: String(raw?.title ?? ''),
+    content: String(raw?.content ?? raw?.contentPreview ?? ''), // immer string
+    author: String(raw?.author ?? 'Unknown'),
+    createdAt: String(raw?.createdAt ?? new Date().toISOString()),
+  });
 }

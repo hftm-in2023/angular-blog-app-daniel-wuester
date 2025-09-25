@@ -1,14 +1,17 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'https://d-cap-blog-backend---v2.whitepond-b96fee4b.westeurope.azurecontainerapps.io',
+  apiBase: '/api',
+  serviceUrl: window.location.origin + '/api',
   auth: {
-    authority: 'http://localhost:8080/auth/realms/hftm/',
-    clientId: 'angular-blog-app',
+    authority:
+      'https://d-cap-keyclaok.kindbay-711f60b2.westeurope.azurecontainerapps.io/realms/blog',
     redirectUrl: window.location.origin,
-    postLogoutRedirectUri: window.location.origin,
-    scope: 'openid profile email',
+    postLogoutRedirectUri: window.location.origin + '/logged-out',
+    clientId: 'spa-blog',
+    scope: 'openid profile email offline_access',
     responseType: 'code',
-    silentRenew: true,
-    useRefreshToken: true,
+    silentRenew: false,
+    silentRenewUrl: window.location.origin + '/silent-renew.html',
+    renewTimeBeforeTokenExpiresInSeconds: 10,
   },
 };
