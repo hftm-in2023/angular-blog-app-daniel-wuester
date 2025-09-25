@@ -1,9 +1,8 @@
 import { Routes } from '@angular/router';
-import { BlogDetailComponent } from './blog-detail.component';
 
 export const blogDetailRoutes: Routes = [
   {
     path: '',
-    component: BlogDetailComponent,
+    loadComponent: () => import('./blog-detail.component').then((m) => m.BlogDetailComponent),
   },
 ];

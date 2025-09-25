@@ -1,24 +1,17 @@
-<ng-container *ngIf="loading(); else contentTpl">
-  <app-spinner></app-spinner>
+<ng-container *ngIf="blog$ | async as b; else loadingTpl">
+  <h2>{{ b.title }}</h2>
+  <p>
+    <strong>von:</strong> {{ b.author }} — <strong>am:</strong>
+    {{ b.createdAt | date: 'yyyy-MM-dd' }}
+  </p>
+  <p>{{ b.content }}</p>
+
+  <button mat-stroked-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Zurück
+  </button>
 </ng-container>
 
-<ng-template #contentTpl>
-  <ng-container *ngIf="blog() as b; else emptyTpl">
-    <app-blog-detail-view [blog]="b"></app-blog-detail-view>
-
-    <div style="margin-top: 12px">
-      <button mat-stroked-button (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon>
-        Zurück
-      </button>
-    </div>
-  </ng-container>
-
-  <ng-template #emptyTpl>
-    <p>Kein Blog gefunden.</p>
-    <button mat-stroked-button (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon>
-      Zurück
-    </button>
-  </ng-template>
+<ng-template #loadingTpl>
+  <p>Lade…</p>
 </ng-template>

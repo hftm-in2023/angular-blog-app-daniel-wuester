@@ -32,6 +32,14 @@
   background: rgba(0, 0, 0, 0.06);
 }
 
+.page-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
 mat-toolbar a[mat-flat-button],
 mat-toolbar button[mat-stroked-button] {
   margin-left: 8px;

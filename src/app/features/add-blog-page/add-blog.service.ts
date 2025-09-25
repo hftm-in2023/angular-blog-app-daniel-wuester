@@ -3,7 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-export type CreatedBlog = { title: string; content: string };
+export type CreatedBlog = {
+  title: string;
+  content: string;
+};
 
 @Injectable({ providedIn: 'root' })
 export class AddBlogService {

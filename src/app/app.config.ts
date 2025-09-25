@@ -27,7 +27,7 @@ export const appConfig: ApplicationConfig = {
         silentRenew: false,
         silentRenewUrl: environment.auth.silentRenewUrl,
         renewTimeBeforeTokenExpiresInSeconds: environment.auth.renewTimeBeforeTokenExpiresInSeconds,
-        secureRoutes: [environment.serviceUrl],
+        secureRoutes: ['/api', environment.serviceUrl],
         customParamsAuthRequest: { prompt: 'login' },
       },
     }),

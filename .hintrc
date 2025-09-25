@@ -11,6 +11,14 @@
       {
         "document-title": "off"
       }
+    ],
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "border: 1px solid color-mix(in oklab, var(--mat-sys-error) 40%, transparent)"
+        ]
+      }
     ]
   }
 }

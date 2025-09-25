@@ -21,11 +21,12 @@
         <span>Alle Blogs</span>
       </a>
 
+      <!-- Sichtbar, sobald eingeloggt -->
       <a
         mat-list-item
         routerLink="/add-blog"
         routerLinkActive="active"
-        *ngIf="canAddBlog()"
+        *ngIf="isAuthenticated()"
         (click)="closeIfHandset(drawer)"
       >
         <mat-icon>add</mat-icon>
@@ -50,11 +51,9 @@
       <button type="button" mat-icon-button (click)="drawer.toggle()" *ngIf="isHandset$ | async">
         <mat-icon>menu</mat-icon>
       </button>
-
       <span class="spacer"></span>
 
       <!-- Desktop-Buttons -->
-      <button mat-stroked-button routerLink="/blogs" *ngIf="!(isHandset$ | async)">Blog</button>
       <a
         mat-flat-button
         color="accent"
@@ -66,18 +65,8 @@
       </a>
     </mat-toolbar>
 
-    <div class="content">
+    <div class="page-container">
       <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
-
-<!-- DEBUG-ONLY: Direkter Login-Testlink zu Keycloak -->
-<a
-  *ngIf="!isAuthenticated()"
-  [href]="rawLoginUrl"
-  style="font-size: 12px; opacity: 0.6; margin: 8px 16px; display: inline-block"
-  >[Debug] Direkt zu Keycloak</a
->
-
-<a [href]="rawLoginUrl">[Debug] Login bei Keycloak öffnen</a>
