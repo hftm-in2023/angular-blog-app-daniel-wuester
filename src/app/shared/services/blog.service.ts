@@ -2,20 +2,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
+import { Blog } from '../../shared/models/blog.model';
 import { environment } from '../../../environments/environment';
-import { Blog } from '../../shared/models/blog.model'; // <-- Model importieren
 
 @Injectable({ providedIn: 'root' })
 export class BlogService {
-  private readonly apiUrl = `${environment.apiBase}/entries`; // Backend liefert /entries (ohne /api hinter dem Proxy)
+  private readonly apiUrl = `${environment.apiBaseUrl}/entries`; // <- RELATIV, damit der Proxy greift
 
   constructor(private readonly _http: HttpClient) {}
 
   // Liste: Backend liefert { data: [...] } mit contentPreview (kein content)
   getBlogs(): Observable<Blog[]> {
-    return this._http
-      .get<{ data: any[] }>(this.apiUrl)
-      .pipe(map((res) => (res?.data ?? []).map((raw) => this.mapListItem(raw))));
+    return this._http.get<any>(this.apiUrl).pipe(map((items) => items.data.map(this.toBlog)));
   }
 
   // Detail: Backend liefert i. d. R. das Objekt direkt ODER als { data: {...} }
