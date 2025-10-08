@@ -1,20 +1,18 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { inject, signal, computed } from '@angular/core';
-
+import { Observable } from 'rxjs';
 import { BlogService } from '../../shared/services/blog.service';
 import { Blog } from '../../shared/models/blog.model';
-import { Observable } from 'rxjs';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Component({
   standalone: true,
   selector: 'app-blog-list',
-  imports: [CommonModule, MatCardModule, MatButtonModule, RouterLink, MatIconModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, RouterLink],
   template: `
     <h2>Blogübersicht</h2>
 
@@ -29,18 +27,20 @@ import { Observable } from 'rxjs';
         <mat-card-content>
           <p>{{ blog.content }}</p>
         </mat-card-content>
-        <mat-card-actions class="actions">
-          <button
-            mat-icon-button
-            color="warn"
-            *ngIf="isAuthenticated"
-            (click)="toggleLike(blog.id)"
-          >
-            <mat-icon>{{ isLiked(blog.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
-          </button>
 
+        <mat-card-actions>
           <button mat-raised-button color="primary" [routerLink]="['/blogs', blog.id]">
             Anzeigen
+          </button>
+
+          <button
+            *ngIf="isAuth()"
+            mat-icon-button
+            aria-label="Like"
+            (click)="toggleLike(blog); $event.stopPropagation()"
+            [disabled]="liking()"
+          >
+            <mat-icon>{{ isLiked(blog) ? 'favorite' : 'favorite_border' }}</mat-icon>
           </button>
         </mat-card-actions>
       </mat-card>
@@ -54,62 +54,54 @@ import { Observable } from 'rxjs';
     `
       .blog-list {
         display: grid;
-        gap: 16px;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        margin-top: 16px;
-        align-items: start;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
       }
-
-      .blog-card,
-      mat-card.blog-card {
-        width: 100%;
-        display: block;
-      }
-
-      .blog-card mat-card-content p {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        margin: 0;
-      }
-
-      .actions {
+      .blog-card {
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+      }
+      mat-card-actions {
+        display: flex;
+        gap: 0.5rem;
         align-items: center;
-      }
-
-      button[mat-icon-button] {
-        transition: transform 0.2s ease;
-      }
-
-      button[mat-icon-button]:active {
-        transform: scale(1.2);
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlogListComponent {
-  private readonly oidc = inject(OidcSecurityService);
-  private readonly blogService = inject(BlogService);
+  private oidc = inject(OidcSecurityService);
+  private blogService = inject(BlogService);
+
   blogs$: Observable<Blog[]> = this.blogService.getBlogs();
 
-  private _isAuthenticated = signal(false);
-  isAuthenticated = computed(() => this._isAuthenticated());
+  private _isAuth = signal(false);
+  isAuth = () => this._isAuth();
+  private _liking = signal(false);
+  liking = () => this._liking();
+
+  private likedIds = new Set<number>();
+  isLiked = (b: Blog) => this.likedIds.has(b.id!);
 
   constructor() {
-    this.oidc.isAuthenticated$.subscribe((res) => {
-      this._isAuthenticated.set(!!res?.isAuthenticated);
+    this.oidc.isAuthenticated$.subscribe((res: any) => {
+      this._isAuth.set(!!res?.isAuthenticated);
     });
   }
 
-  toggleLike(id: number) {
-    this.blogService.toggleLike(id);
-  }
-
-  isLiked(id: number): boolean {
-    return this.blogService.isLiked(id);
+  async toggleLike(blog: Blog) {
+    if (!this.isAuth()) return;
+    this._liking.set(true);
+    try {
+      if (this.isLiked(blog)) {
+        this.likedIds.delete(blog.id!);
+      } else {
+        this.likedIds.add(blog.id!);
+      }
+    } finally {
+      this._liking.set(false);
+    }
   }
 }
