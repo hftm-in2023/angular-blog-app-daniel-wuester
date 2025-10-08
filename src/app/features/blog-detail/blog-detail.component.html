@@ -1,17 +1,30 @@
-<ng-container *ngIf="blog$ | async as b; else loadingTpl">
-  <h2>{{ b.title }}</h2>
+<ng-container *ngIf="blog$ | async as blog; else loading">
+  <h2>{{ blog.title }}</h2>
   <p>
-    <strong>von:</strong> {{ b.author }} — <strong>am:</strong>
-    {{ b.createdAt | date: 'yyyy-MM-dd' }}
+    <strong>von:</strong> {{ blog.author }} — <strong>am:</strong>
+    {{ blog.createdAt | date: 'yyyy-MM-dd' }}
   </p>
-  <p>{{ b.content }}</p>
 
-  <button mat-stroked-button (click)="goBack()">
-    <mat-icon>arrow_back</mat-icon>
-    Zurück
-  </button>
+  <p>{{ blog.content }}</p>
+
+  <div class="actions">
+    <button
+      mat-icon-button
+      color="warn"
+      *ngIf="isAuthenticated()"
+      (click)="toggleLike(blog.id)"
+      aria-label="Like"
+    >
+      <mat-icon>{{ isLiked(blog.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
+    </button>
+
+    <button mat-stroked-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Zurück
+    </button>
+  </div>
 </ng-container>
 
-<ng-template #loadingTpl>
+<ng-template #loading>
   <p>Lade…</p>
 </ng-template>

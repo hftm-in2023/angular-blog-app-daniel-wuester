@@ -45,8 +45,21 @@ export class BlogService {
   private mapDetailItem = (raw: any): Blog => ({
     id: Number(raw?.id),
     title: String(raw?.title ?? ''),
-    content: String(raw?.content ?? raw?.contentPreview ?? ''), // immer string
+    content: String(raw?.content ?? raw?.contentPreview ?? ''),
     author: String(raw?.author ?? 'Unknown'),
     createdAt: String(raw?.createdAt ?? new Date().toISOString()),
   });
+
+  toggleLike(blogId: number): void {
+    const key = 'blog-likes';
+    const stored = JSON.parse(localStorage.getItem(key) || '{}');
+    stored[blogId] = !stored[blogId];
+    localStorage.setItem(key, JSON.stringify(stored));
+  }
+
+  isLiked(blogId: number): boolean {
+    const key = 'blog-likes';
+    const stored = JSON.parse(localStorage.getItem(key) || '{}');
+    return !!stored[blogId];
+  }
 }

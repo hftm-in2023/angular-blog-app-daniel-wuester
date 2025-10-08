@@ -8,7 +8,7 @@ import { MatCardModule } from '@angular/material/card';
   imports: [CommonModule, MatCardModule],
   template: `
     <mat-card>
-      <mat-card-title>Willkommen in der BlogApp 🎉</mat-card-title>
+      <mat-card-title>Willkommen in der BlogApp </mat-card-title>
       <mat-card-content>
         <p>
           Dies ist die Übersicht. Wähle links im Menü einen Bereich aus oder starte direkt mit den
