@@ -1,20 +1,27 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { map, Observable, BehaviorSubject } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 import { Blog } from '../../shared/models/blog.model';
 import { environment } from '../../../environments/environment';
+
+type LikesMap = Record<number, boolean>;
+const LIKES_KEY = 'blog-likes';
 
 @Injectable({ providedIn: 'root' })
 export class BlogService {
   private readonly apiUrl = `${environment.apiBase}/entries`;
 
+  // Zentrale, reaktive Quelle
+  private readonly _likes$ = new BehaviorSubject<LikesMap>(this.loadLikes());
+
   constructor(private readonly _http: HttpClient) {}
 
+  // ---------- Blogs ----------
   getBlogs(): Observable<Blog[]> {
-    return this._http.get<any>(this.apiUrl).pipe(
-      map((items) => (Array.isArray(items?.data) ? items.data : items)),
-      map((arr: any[]) => arr.map((x) => this.mapListItem(x))),
-    );
+    return this._http
+      .get<any>(this.apiUrl)
+      .pipe(map((items) => (items?.data || []).map(this.mapListItem)));
   }
 
   getBlogById(id: number): Observable<Blog> {
@@ -30,23 +37,43 @@ export class BlogService {
       .pipe(map((raw) => this.mapDetailItem(raw?.data ?? raw)));
   }
 
-  toggleLike(blogId: number): void {
-    const key = 'blog-likes';
-    const stored = JSON.parse(localStorage.getItem(key) || '{}');
-    stored[blogId] = !stored[blogId];
-    localStorage.setItem(key, JSON.stringify(stored));
+  // ---------- Likes (reaktiv) ----------
+  isLiked$(blogId: number): Observable<boolean> {
+    return this._likes$.pipe(
+      map((m) => !!m[blogId]),
+      distinctUntilChanged(),
+    );
   }
 
   isLiked(blogId: number): boolean {
-    const key = 'blog-likes';
-    const stored = JSON.parse(localStorage.getItem(key) || '{}');
-    return !!stored[blogId];
+    return !!this._likes$.value[blogId];
   }
 
+  toggleLike(blogId: number): void {
+    const current = { ...this._likes$.value };
+    current[blogId] = !current[blogId];
+    this._likes$.next(current);
+    this.saveLikes(current);
+  }
+
+  // ---------- Persistenz ----------
+  private loadLikes(): LikesMap {
+    try {
+      return JSON.parse(localStorage.getItem(LIKES_KEY) || '{}');
+    } catch {
+      return {};
+    }
+  }
+
+  private saveLikes(m: LikesMap) {
+    localStorage.setItem(LIKES_KEY, JSON.stringify(m));
+  }
+
+  // ---------- Mapper ----------
   private mapListItem = (raw: any): Blog => ({
     id: Number(raw?.id),
     title: String(raw?.title ?? ''),
-    content: String(raw?.contentPreview ?? raw?.content ?? ''),
+    content: String(raw?.contentPreview ?? ''),
     author: String(raw?.author ?? 'Unknown'),
     createdAt: String(raw?.createdAt ?? new Date().toISOString()),
   });

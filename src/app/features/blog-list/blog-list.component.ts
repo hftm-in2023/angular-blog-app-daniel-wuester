@@ -40,7 +40,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
             (click)="toggleLike(blog); $event.stopPropagation()"
             [disabled]="liking()"
           >
-            <mat-icon>{{ isLiked(blog) ? 'favorite' : 'favorite_border' }}</mat-icon>
+            <mat-icon>{{ (isLiked$(blog) | async) ? 'favorite' : 'favorite_border' }}</mat-icon>
           </button>
         </mat-card-actions>
       </mat-card>
@@ -90,16 +90,12 @@ export class BlogListComponent {
       this._isAuth.set(!!res?.isAuthenticated);
     });
   }
+  isLiked$ = (blog: Blog) => this.blogService.isLiked$(blog.id);
 
-  async toggleLike(blog: Blog) {
-    if (!this.isAuth()) return;
+  toggleLike(blog: Blog) {
     this._liking.set(true);
     try {
-      if (this.isLiked(blog)) {
-        this.likedIds.delete(blog.id!);
-      } else {
-        this.likedIds.add(blog.id!);
-      }
+      this.blogService.toggleLike(blog.id);
     } finally {
       this._liking.set(false);
     }
