@@ -1,41 +1,49 @@
 :host {
-  .error-message {
-    padding: 1rem;
-    margin: 1rem 0;
-    color: var(--mat-sys-error);
-    background-color: var(--mat-sys-error-container);
-    border-radius: 6px;
+  display: block;
+}
 
-    .error-detail {
-      opacity: 0.8;
-      font-size: 0.875rem;
-      margin-top: 0.25rem;
-    }
-  }
+.form-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 0 24px;
+  box-sizing: border-box;
+}
 
-  .submit-button {
-    margin-bottom: 10px;
-    margin-top: 20px;
-  }
+.add-blog-form .field-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-  .button-group {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    justify-content: flex-end;
-    margin-bottom: 8px;
-  }
+.add-blog-form .field-stack mat-form-field {
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+}
 
-  .blog-input {
-    display: flex;
-    flex-direction: column;
-    margin-left: auto;
-    margin-right: auto;
-    width: 80%;
+.add-blog-form textarea[matInput] {
+  min-height: 420px;
+  resize: vertical;
+}
 
-    mat-form-field.mat-mdc-form-field {
-      margin-top: 10px;
-      width: 100%;
-    }
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.error-message {
+  padding: 1rem;
+  margin: 1rem 0;
+  color: var(--mat-sys-error);
+  background-color: var(--mat-sys-error-container);
+  border-radius: 6px;
+
+  .error-detail {
+    opacity: 0.8;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
   }
 }

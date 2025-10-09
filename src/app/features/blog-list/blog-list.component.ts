@@ -1,17 +1,18 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-
+import { MatIconModule } from '@angular/material/icon';
+import { Observable } from 'rxjs';
 import { BlogService } from '../../shared/services/blog.service';
 import { Blog } from '../../shared/models/blog.model';
-import { Observable } from 'rxjs';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Component({
   standalone: true,
   selector: 'app-blog-list',
-  imports: [CommonModule, MatCardModule, MatButtonModule, RouterLink],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, RouterLink],
   template: `
     <h2>Blogübersicht</h2>
 
@@ -31,6 +32,16 @@ import { Observable } from 'rxjs';
           <button mat-raised-button color="primary" [routerLink]="['/blogs', blog.id]">
             Anzeigen
           </button>
+
+          <button
+            *ngIf="isAuth()"
+            mat-icon-button
+            aria-label="Like"
+            (click)="toggleLike(blog); $event.stopPropagation()"
+            [disabled]="liking()"
+          >
+            <mat-icon>{{ isLiked(blog) ? 'favorite' : 'favorite_border' }}</mat-icon>
+          </button>
         </mat-card-actions>
       </mat-card>
     </div>
@@ -42,23 +53,55 @@ import { Observable } from 'rxjs';
   styles: [
     `
       .blog-list {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
         gap: 1rem;
         margin-top: 1rem;
       }
       .blog-card {
-        flex: 1 1 calc(50% - 1rem);
-        min-width: 300px;
+        display: flex;
+        flex-direction: column;
+      }
+      mat-card-actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlogListComponent {
-  blogs$: Observable<Blog[]>;
+  private oidc = inject(OidcSecurityService);
+  private blogService = inject(BlogService);
 
-  constructor(private readonly blogService: BlogService) {
-    this.blogs$ = this.blogService.getBlogs();
+  blogs$: Observable<Blog[]> = this.blogService.getBlogs();
+
+  private _isAuth = signal(false);
+  isAuth = () => this._isAuth();
+  private _liking = signal(false);
+  liking = () => this._liking();
+
+  private likedIds = new Set<number>();
+  isLiked = (b: Blog) => this.likedIds.has(b.id!);
+
+  constructor() {
+    this.oidc.isAuthenticated$.subscribe((res: any) => {
+      this._isAuth.set(!!res?.isAuthenticated);
+    });
+  }
+
+  async toggleLike(blog: Blog) {
+    if (!this.isAuth()) return;
+    this._liking.set(true);
+    try {
+      if (this.isLiked(blog)) {
+        this.likedIds.delete(blog.id!);
+      } else {
+        this.likedIds.add(blog.id!);
+      }
+    } finally {
+      this._liking.set(false);
+    }
   }
 }

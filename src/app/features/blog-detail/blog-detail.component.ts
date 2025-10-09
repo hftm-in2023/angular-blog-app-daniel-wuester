@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,32 +7,25 @@ import { map, filter, distinctUntilChanged, switchMap, shareReplay } from 'rxjs/
 import { Observable } from 'rxjs';
 import { BlogService } from '../../shared/services/blog.service';
 import { Blog } from '../../shared/models/blog.model';
-import { Location } from '@angular/common';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { signal, computed } from '@angular/core';
 
 @Component({
   standalone: true,
   selector: 'app-blog-detail',
   imports: [CommonModule, MatButtonModule, MatIconModule],
-  template: `
-    <ng-container *ngIf="blog$ | async as blog; else loading">
-      <h2>{{ blog.title }}</h2>
-      <p>
-        <strong>von:</strong> {{ blog.author }} — <strong>am:</strong>
-        {{ blog.createdAt | date: 'yyyy-MM-dd' }}
-      </p>
-      <p>{{ blog.content }}</p>
-
-      <button mat-stroked-button (click)="goBack()"><mat-icon>arrow_back</mat-icon> Zurück</button>
-    </ng-container>
-
-    <ng-template #loading><p>Lade…</p></ng-template>
-  `,
+  templateUrl: './blog-detail.component.html',
+  styleUrls: ['./blog-detail.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlogDetailComponent {
   private route = inject(ActivatedRoute);
   private api = inject(BlogService);
   private location = inject(Location);
+  private oidc = inject(OidcSecurityService);
+
+  private _isAuthenticated = signal(false);
+  isAuthenticated = computed(() => this._isAuthenticated());
 
   blog$: Observable<Blog> = this.route.paramMap.pipe(
     map((pm) => Number(pm.get('id'))),
@@ -41,6 +34,20 @@ export class BlogDetailComponent {
     switchMap((id) => this.api.getBlogById(id)),
     shareReplay(1),
   );
+
+  constructor() {
+    this.oidc.isAuthenticated$.subscribe((res) => {
+      this._isAuthenticated.set(!!res?.isAuthenticated);
+    });
+  }
+
+  toggleLike(id: number) {
+    this.api.toggleLike(id);
+  }
+
+  isLiked(id: number): boolean {
+    return this.api.isLiked(id);
+  }
 
   goBack() {
     this.location.back();

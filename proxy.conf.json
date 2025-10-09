@@ -1,8 +1,9 @@
 {
-  "/entries": {
-    "target": "http://localhost:9091",
+  "/api": {
+    "target": "https://d-cap-blog-backend---v2.whitepond-b96fee4b.westeurope.azurecontainerapps.io",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug"
+    "logLevel": "debug",
+    "pathRewrite": { "^/api": "" }
   }
 }

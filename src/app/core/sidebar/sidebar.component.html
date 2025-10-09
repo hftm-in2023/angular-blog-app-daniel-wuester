@@ -1,0 +1,73 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    #drawer
+    class="sidenav"
+    fixedInViewport
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="!(isHandset$ | async)"
+  >
+    <mat-toolbar>
+      <a routerLink="/overview" class="brand-link">BlogApp</a>
+    </mat-toolbar>
+
+    <mat-nav-list>
+      <a
+        mat-list-item
+        routerLink="/blogs"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeIfHandset(drawer)"
+      >
+        <mat-icon>list</mat-icon>
+        <span>Alle Blogs</span>
+      </a>
+
+      <a
+        mat-list-item
+        routerLink="/add-blog"
+        routerLinkActive="active"
+        *ngIf="isAuthenticated()"
+        (click)="closeIfHandset(drawer)"
+      >
+        <mat-icon>add</mat-icon>
+        <span>Blog erstellen</span>
+      </a>
+    </mat-nav-list>
+
+    <div class="auth-actions">
+      <span class="user" *ngIf="isAuthenticated()">{{ displayName() }}</span>
+
+      <button mat-stroked-button (click)="authToggle()" [disabled]="busy()">
+        {{ isAuthenticated() ? 'Logout' : 'Login' }}
+      </button>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button
+        type="button"
+        mat-icon-button
+        aria-label="Menü öffnen"
+        (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="spacer"></span>
+
+      <a
+        mat-flat-button
+        color="accent"
+        routerLink="/add-blog"
+        *ngIf="canAddBlog() && !(isHandset$ | async)"
+      >
+        <mat-icon>add</mat-icon>
+        New Blog
+      </a>
+    </mat-toolbar>
+    <div class="page-container">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

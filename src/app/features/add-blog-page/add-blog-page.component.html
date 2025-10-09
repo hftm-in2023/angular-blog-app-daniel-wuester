@@ -1,5 +1,5 @@
-<form [formGroup]="formTyped" (ngSubmit)="onSubmit()">
-  <div class="blog-input">
+<form class="add-blog-form" [formGroup]="formTyped" (ngSubmit)="onSubmit()">
+  <div class="form-container">
     @if (hasError()) {
       <div class="error-message">
         <mat-icon>error</mat-icon>
@@ -8,50 +8,38 @@
       </div>
     }
 
-    <div class="button-group">
-      <button
-        type="submit"
-        class="submit-button"
-        mat-raised-button
-        color="primary"
-        [disabled]="submitDisabled()"
-      >
-        Publish blog
-      </button>
+    <div class="field-stack">
+      <mat-form-field appearance="fill">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" placeholder="Blog title" />
+        <mat-error> … </mat-error>
+      </mat-form-field>
 
-      <button type="button" mat-raised-button color="secondary" (click)="onReset()">Reset</button>
+      <mat-form-field appearance="fill">
+        <mat-label id="contentLabel">Tell your story…</mat-label>
+        <textarea
+          matInput
+          rows="18"
+          formControlName="content"
+          aria-labelledby="contentLabel"
+          placeholder="Write your blog content"
+        >
+        </textarea>
+        <mat-error>
+          @if (contentCtrl().hasError('required')) {
+            <span>Content is required</span>
+          } @else if (contentCtrl().hasError('minlength')) {
+            <span>Content must be at least 5 characters long</span>
+          }
+        </mat-error>
+      </mat-form-field>
     </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Title</mat-label>
-      <input matInput formControlName="title" placeholder="Blog title" aria-label="Blog title" />
-      <mat-error>
-        @if (titleCtrl().hasError('required')) {
-          <span>Title is required</span>
-        } @else if (titleCtrl().hasError('minlength')) {
-          <span>Title must be at least 2 characters long</span>
-        } @else if (titleCtrl().hasError('pattern')) {
-          <span>Title must start with a capital letter</span>
-        }
-      </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Tell your story...</mat-label>
-      <textarea
-        matInput
-        rows="18"
-        formControlName="content"
-        placeholder="Write your blog content"
-        aria-label="Blog content"
-      ></textarea>
-      <mat-error>
-        @if (contentCtrl().hasError('required')) {
-          <span>Content is required</span>
-        } @else if (contentCtrl().hasError('minlength')) {
-          <span>Content must be at least 5 characters long</span>
-        }
-      </mat-error>
-    </mat-form-field>
+    <div class="button-group">
+      <button type="submit" mat-raised-button color="primary" [disabled]="submitDisabled()">
+        Publish blog
+      </button>
+      <button type="button" mat-raised-button color="accent" (click)="onReset()">Reset</button>
+    </div>
   </div>
 </form>
