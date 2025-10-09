@@ -1,4 +1,3 @@
-// src/app/shared/services/blog.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
@@ -7,16 +6,17 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class BlogService {
-  private readonly apiUrl = `${environment.apiBaseUrl}/entries`; // <- RELATIV, damit der Proxy greift
+  private readonly apiUrl = `${environment.apiBase}/entries`;
 
   constructor(private readonly _http: HttpClient) {}
 
-  // Liste: Backend liefert { data: [...] } mit contentPreview (kein content)
   getBlogs(): Observable<Blog[]> {
-    return this._http.get<any>(this.apiUrl).pipe(map((items) => items.data.map(this.toBlog)));
+    return this._http.get<any>(this.apiUrl).pipe(
+      map((items) => (Array.isArray(items?.data) ? items.data : items)),
+      map((arr: any[]) => arr.map((x) => this.mapListItem(x))),
+    );
   }
 
-  // Detail: Backend liefert i. d. R. das Objekt direkt ODER als { data: {...} }
   getBlogById(id: number): Observable<Blog> {
     return this._http
       .get<any>(`${this.apiUrl}/${id}`)
@@ -30,24 +30,6 @@ export class BlogService {
       .pipe(map((raw) => this.mapDetailItem(raw?.data ?? raw)));
   }
 
-  // --- Mapper ---
-  private mapListItem = (raw: any): Blog => ({
-    id: Number(raw?.id),
-    title: String(raw?.title ?? ''),
-    // Liste hat nur contentPreview -> als content verwenden, damit Typ passt
-    content: String(raw?.contentPreview ?? ''),
-    author: String(raw?.author ?? 'Unknown'),
-    createdAt: String(raw?.createdAt ?? new Date().toISOString()),
-  });
-
-  private mapDetailItem = (raw: any): Blog => ({
-    id: Number(raw?.id),
-    title: String(raw?.title ?? ''),
-    content: String(raw?.content ?? raw?.contentPreview ?? ''),
-    author: String(raw?.author ?? 'Unknown'),
-    createdAt: String(raw?.createdAt ?? new Date().toISOString()),
-  });
-
   toggleLike(blogId: number): void {
     const key = 'blog-likes';
     const stored = JSON.parse(localStorage.getItem(key) || '{}');
@@ -60,4 +42,20 @@ export class BlogService {
     const stored = JSON.parse(localStorage.getItem(key) || '{}');
     return !!stored[blogId];
   }
+
+  private mapListItem = (raw: any): Blog => ({
+    id: Number(raw?.id),
+    title: String(raw?.title ?? ''),
+    content: String(raw?.contentPreview ?? raw?.content ?? ''),
+    author: String(raw?.author ?? 'Unknown'),
+    createdAt: String(raw?.createdAt ?? new Date().toISOString()),
+  });
+
+  private mapDetailItem = (raw: any): Blog => ({
+    id: Number(raw?.id),
+    title: String(raw?.title ?? ''),
+    content: String(raw?.content ?? raw?.contentPreview ?? ''),
+    author: String(raw?.author ?? 'Unknown'),
+    createdAt: String(raw?.createdAt ?? new Date().toISOString()),
+  });
 }
