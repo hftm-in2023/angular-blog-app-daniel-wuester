@@ -12,12 +12,10 @@ const LIKES_KEY = 'blog-likes';
 export class BlogService {
   private readonly apiUrl = `${environment.apiBase}/entries`;
 
-  // Zentrale, reaktive Quelle
   private readonly _likes$ = new BehaviorSubject<LikesMap>(this.loadLikes());
 
   constructor(private readonly _http: HttpClient) {}
 
-  // ---------- Blogs ----------
   getBlogs(): Observable<Blog[]> {
     return this._http
       .get<any>(this.apiUrl)
@@ -37,7 +35,6 @@ export class BlogService {
       .pipe(map((raw) => this.mapDetailItem(raw?.data ?? raw)));
   }
 
-  // ---------- Likes (reaktiv) ----------
   isLiked$(blogId: number): Observable<boolean> {
     return this._likes$.pipe(
       map((m) => !!m[blogId]),
@@ -56,7 +53,6 @@ export class BlogService {
     this.saveLikes(current);
   }
 
-  // ---------- Persistenz ----------
   private loadLikes(): LikesMap {
     try {
       return JSON.parse(localStorage.getItem(LIKES_KEY) || '{}');
@@ -69,7 +65,6 @@ export class BlogService {
     localStorage.setItem(LIKES_KEY, JSON.stringify(m));
   }
 
-  // ---------- Mapper ----------
   private mapListItem = (raw: any): Blog => ({
     id: Number(raw?.id),
     title: String(raw?.title ?? ''),
