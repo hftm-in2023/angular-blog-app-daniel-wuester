@@ -1,0 +1,32 @@
+{
+  "APP": {
+    "TITLE": "BlogApp by Daniel"
+  },
+  "NAV": {
+    "ALL_BLOGS": "All blogs",
+    "NEW_BLOG": "Create blog"
+  },
+  "AUTH": {
+    "LOGIN": "Login",
+    "LOGOUT": "Logout"
+  },
+  "BLOG": {
+    "OVERVIEW": "Blog overview",
+    "PUBLISH": "Publish blog",
+    "RESET": "Reset",
+    "BY": "by {{author}} on {{date}}",
+    "SHOW": "Show",
+    "NO_BLOGS": "No blogs available.",
+    "BACK": "Back"
+  },
+  "NEW_BLOG": {
+    "TITLE": "Title",
+    "TELL_YOUR_STORY": "Tell your story...",
+    "PUBLISH_BLOG": "Publish blog",
+    "RESET": "Reset",
+    "WRITE_YOUR_BLOG_CONTENT": "Write your blog content",
+    "CONTENT_LENGHT": "Content must be at least 5 characters long",
+    "CONTENT_REQUIRED": "Content is required",
+    "ERROR": "Oops, the blog could not be saved. Please try again later."
+  }
+}

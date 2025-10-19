@@ -6,8 +6,8 @@
     [mode]="(isHandset$ | async) ? 'over' : 'side'"
     [opened]="!(isHandset$ | async)"
   >
-    <mat-toolbar>
-      <a routerLink="/overview" class="brand-link">BlogApp</a>
+    <mat-toolbar color="primary" class="toolbar">
+      <a routerLink="/overview" class="brand-link">{{ 'APP.TITLE' | translate }}</a>
     </mat-toolbar>
 
     <mat-nav-list>
@@ -19,7 +19,7 @@
         (click)="closeIfHandset(drawer)"
       >
         <mat-icon>list</mat-icon>
-        <span>Alle Blogs</span>
+        <span>{{ 'NAV.ALL_BLOGS' | translate }}</span>
       </a>
 
       <a
@@ -30,13 +30,12 @@
         (click)="closeIfHandset(drawer)"
       >
         <mat-icon>add</mat-icon>
-        <span>Blog erstellen</span>
+        <span>{{ 'NAV.NEW_BLOG' | translate }}</span>
       </a>
     </mat-nav-list>
 
     <div class="auth-actions">
       <span class="user" *ngIf="isAuthenticated()">{{ displayName() }}</span>
-
       <button mat-stroked-button (click)="authToggle()" [disabled]="busy()">
         {{ isAuthenticated() ? 'Logout' : 'Login' }}
       </button>
@@ -45,6 +44,7 @@
 
   <mat-sidenav-content>
     <mat-toolbar color="primary">
+      <!-- NEU: Hamburger nur mobil -->
       <button
         type="button"
         mat-icon-button
@@ -54,18 +54,21 @@
       >
         <mat-icon>menu</mat-icon>
       </button>
+
       <span class="spacer"></span>
 
-      <a
-        mat-flat-button
-        color="accent"
-        routerLink="/add-blog"
-        *ngIf="canAddBlog() && !(isHandset$ | async)"
-      >
-        <mat-icon>add</mat-icon>
-        New Blog
-      </a>
+      <div class="lang-switch">
+        <button
+          mat-button
+          *ngFor="let l of languages"
+          [disabled]="language() === l.code"
+          (click)="setLanguage(l.code)"
+        >
+          {{ l.label }}
+        </button>
+      </div>
     </mat-toolbar>
+
     <div class="page-container">
       <router-outlet></router-outlet>
     </div>

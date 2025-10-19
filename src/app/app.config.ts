@@ -4,6 +4,8 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideAuth, AuthInterceptor, OidcSecurityService } from 'angular-auth-oidc-client';
 import { catchError, firstValueFrom, of } from 'rxjs';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
@@ -14,7 +16,17 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withEnabledBlockingInitialNavigation()),
     provideAnimations(),
+
     provideHttpClient(withInterceptorsFromDi()),
+
+    provideTranslateService({
+      loader: provideTranslateHttpLoader({
+        prefix: './i18n/',
+        suffix: '.json',
+      }),
+      fallbackLang: 'en',
+      lang: 'en',
+    }),
 
     provideAuth({
       config: {
@@ -31,6 +43,7 @@ export const appConfig: ApplicationConfig = {
         customParamsAuthRequest: { prompt: 'login' },
       },
     }),
+
     {
       provide: APP_INITIALIZER,
       multi: true,

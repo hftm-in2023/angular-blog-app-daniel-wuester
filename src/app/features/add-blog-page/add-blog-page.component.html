@@ -3,33 +3,33 @@
     @if (hasError()) {
       <div class="error-message">
         <mat-icon>error</mat-icon>
-        Oops, der Blog konnte nicht gespeichert werden. Bitte später erneut versuchen.
+        {{ 'NEW_BLOG.ERROR' | translate }}
         <div class="error-detail">{{ errorMsg() }}</div>
       </div>
     }
 
     <div class="field-stack">
       <mat-form-field appearance="fill">
-        <mat-label>Title</mat-label>
-        <input matInput formControlName="title" placeholder="Blog title" />
+        <mat-label>{{ 'NEW_BLOG.TITLE' | translate }}</mat-label>
+        <input matInput formControlName="title" [placeholder]="'NEW_BLOG.TITLE' | translate" />
         <mat-error> … </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill">
-        <mat-label id="contentLabel">Tell your story…</mat-label>
+        <mat-label id="contentLabel">{{ 'NEW_BLOG.TELL_YOUR_STORY' | translate }}</mat-label>
         <textarea
           matInput
           rows="18"
           formControlName="content"
           aria-labelledby="contentLabel"
-          placeholder="Write your blog content"
+          [placeholder]="'NEW_BLOG.WRITE_YOUR_BLOG_CONTENT' | translate"
         >
         </textarea>
         <mat-error>
           @if (contentCtrl().hasError('required')) {
-            <span>Content is required</span>
+            <span>{{ 'NEW_BLOG.CONTENT_REQUIRED' | translate }}</span>
           } @else if (contentCtrl().hasError('minlength')) {
-            <span>Content must be at least 5 characters long</span>
+            <span>{{ 'NEW_BLOG.CONTENT_LENGHT' | translate }}</span>
           }
         </mat-error>
       </mat-form-field>
@@ -37,9 +37,11 @@
 
     <div class="button-group">
       <button type="submit" mat-raised-button color="primary" [disabled]="submitDisabled()">
-        Publish blog
+        {{ 'NEW_BLOG.PUBLISH_BLOG' | translate }}
       </button>
-      <button type="button" mat-raised-button color="accent" (click)="onReset()">Reset</button>
+      <button type="button" mat-raised-button color="accent" (click)="onReset()">
+        {{ 'NEW_BLOG.RESET' | translate }}
+      </button>
     </div>
   </div>
 </form>

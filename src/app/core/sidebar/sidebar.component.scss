@@ -4,6 +4,10 @@
 
 .sidenav {
   width: 220px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 
 .spacer {
@@ -43,4 +47,37 @@
 mat-toolbar a[mat-flat-button],
 mat-toolbar button[mat-stroked-button] {
   margin-left: 8px;
+}
+
+.toolbar {
+  .brand-link {
+    color: #153cbd;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .lang-switch {
+    display: flex;
+    gap: 4px;
+
+    button[mat-button] {
+      color: #153cbd;
+      opacity: 0.9;
+      text-transform: uppercase;
+      padding: 0 8px;
+      min-width: 36px;
+
+      &:hover {
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.15);
+      }
+      &:disabled {
+        background: rgba(255, 255, 255, 0.25);
+        opacity: 1;
+      }
+    }
+  }
 }

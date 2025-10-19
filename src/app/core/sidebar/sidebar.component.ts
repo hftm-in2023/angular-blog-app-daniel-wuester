@@ -20,6 +20,7 @@ import { catchError, map, shareReplay } from 'rxjs/operators';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { firstValueFrom, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sidebar',
@@ -35,6 +36,7 @@ import { environment } from '../../../environments/environment';
     MatListModule,
     RouterLinkActive,
     RouterOutlet,
+    TranslatePipe,
   ],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
@@ -48,6 +50,22 @@ export class SidebarComponent {
   private _isAuthenticated = signal(false);
   private _userData = signal<any>(null);
   private _busy = signal(false);
+  private translate = inject(TranslateService);
+
+  languages = [
+    { code: 'de', label: 'DE' },
+    { code: 'fr', label: 'FR' },
+    { code: 'it', label: 'IT' },
+    { code: 'en', label: 'EN' },
+  ];
+
+  language = signal(this.translate.currentLang || this.translate.getDefaultLang() || 'en');
+
+  setLanguage(code: string) {
+    this.translate.use(code);
+    localStorage.setItem('language', code);
+    this.language.set(code);
+  }
 
   busy = computed(() => this._busy());
 
@@ -69,7 +87,6 @@ export class SidebarComponent {
     if (this.isHandset()) drawer.close();
   }
 
-  // sidebar.component.ts (oben in der Klasse, vor dem constructor)
   readonly rawLoginUrl =
     `${environment.auth.authority}/protocol/openid-connect/auth` +
     `?client_id=${encodeURIComponent(environment.auth.clientId)}` +
@@ -79,17 +96,13 @@ export class SidebarComponent {
     `&prompt=login`;
 
   constructor() {
-    // isAuthenticated$ liefert { isAuthenticated: boolean, ... }
     this.oidc.isAuthenticated$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((res) => {
       console.log('[OIDC] isAuthenticated$ =>', res);
       const isAuth = !!res?.isAuthenticated;
       this._isAuthenticated.set(isAuth);
-
-      // WICHTIG: Busy immer beenden, wenn ein Auth-Result angekommen ist
       this._busy.set(false);
     });
 
-    // userData$ liefert { userData, ... }
     this.oidc.userData$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((res) => {
       console.log('[OIDC] userData$ =>', res);
       this._userData.set(res?.userData ?? null);

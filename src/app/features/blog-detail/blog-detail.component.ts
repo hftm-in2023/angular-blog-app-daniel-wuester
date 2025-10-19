@@ -9,11 +9,12 @@ import { BlogService } from '../../shared/services/blog.service';
 import { Blog } from '../../shared/models/blog.model';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { signal, computed } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   standalone: true,
   selector: 'app-blog-detail',
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, TranslateModule],
   templateUrl: './blog-detail.component.html',
   styleUrls: ['./blog-detail.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
