@@ -1,0 +1,32 @@
+{
+  "APP": {
+    "TITLE": "BlogApp von Daniel"
+  },
+  "NAV": {
+    "ALL_BLOGS": "Alle Blogs",
+    "NEW_BLOG": "Blog erstellen"
+  },
+  "AUTH": {
+    "LOGIN": "Login",
+    "LOGOUT": "Logout"
+  },
+  "BLOG": {
+    "OVERVIEW": "Blogübersicht",
+    "PUBLISH": "Blog veröffentlichen",
+    "RESET": "Zurücksetzen",
+    "BY": "von {{author}} am {{date}}",
+    "SHOW": "Anzeigen",
+    "NO_BLOGS": "Keine Blogs verfügbar.",
+    "BACK": "Zurück"
+  },
+  "NEW_BLOG": {
+    "TITLE": "Titel",
+    "TELL_YOUR_STORY": "Erzähle deine Geschichte...",
+    "PUBLISH_BLOG": "Blog veröffentlichen",
+    "RESET": "Reset",
+    "WRITE_YOUR_BLOG_CONTENT": "Schreibe deinen Blog-Inhalt",
+    "CONTENT_LENGHT": "Der Inhalt muss mindestens 5 Zeichen enthalten",
+    "CONTENT_REQUIRED": "Inhalt gefordert",
+    "ERROR": "Oops, der Blog konnte nicht gespeichert werden. Bitte später erneut versuchen."
+  }
+}

@@ -7,7 +7,7 @@ import { MatCardModule } from '@angular/material/card';
   selector: 'app-overview',
   imports: [CommonModule, MatCardModule],
   template: `
-    <mat-card>
+    <!-- <mat-card>
       <mat-card-title>Willkommen in der BlogApp </mat-card-title>
       <mat-card-content>
         <p>
@@ -15,7 +15,7 @@ import { MatCardModule } from '@angular/material/card';
           Blogs.
         </p>
       </mat-card-content>
-    </mat-card>
+    </mat-card> -->
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

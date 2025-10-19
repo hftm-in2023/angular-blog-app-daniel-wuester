@@ -8,13 +8,21 @@ import { Observable } from 'rxjs';
 import { BlogService } from '../../shared/services/blog.service';
 import { Blog } from '../../shared/models/blog.model';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   standalone: true,
   selector: 'app-blog-list',
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, RouterLink],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterLink,
+    TranslateModule,
+  ],
   template: `
-    <h2>Blogübersicht</h2>
+    <h2>{{ 'BLOG.OVERVIEW' | translate }}</h2>
 
     <div class="blog-list" *ngIf="blogs$ | async as blogs; else noBlogs">
       <mat-card class="blog-card" *ngFor="let blog of blogs">
@@ -30,7 +38,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 
         <mat-card-actions>
           <button mat-raised-button color="primary" [routerLink]="['/blogs', blog.id]">
-            Anzeigen
+            {{ 'BLOG.SHOW' | translate }}
           </button>
 
           <button
@@ -47,7 +55,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
     </div>
 
     <ng-template #noBlogs>
-      <p>Keine Blogs verfügbar.</p>
+      <p>{{ 'BLOG.NO_BLOGS' | translate }}</p>
     </ng-template>
   `,
   styles: [

@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AddBlogService } from './add-blog.service';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   standalone: true,
@@ -18,6 +19,7 @@ import { Router } from '@angular/router';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    TranslateModule,
   ],
   templateUrl: './add-blog-page.component.html',
   styleUrls: ['./add-blog-page.component.scss'],
