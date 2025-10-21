@@ -9,6 +9,7 @@ import { BlogService } from '../../shared/services/blog.service';
 import { Blog } from '../../shared/models/blog.model';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { TranslateModule } from '@ngx-translate/core';
+import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
 
 @Component({
   standalone: true,
@@ -19,40 +20,53 @@ import { TranslateModule } from '@ngx-translate/core';
     MatButtonModule,
     MatIconModule,
     RouterLink,
+    SpinnerComponent,
     TranslateModule,
   ],
   template: `
     <h2>{{ 'BLOG.OVERVIEW' | translate }}</h2>
 
-    <div class="blog-list" *ngIf="blogs$ | async as blogs; else noBlogs">
-      <mat-card class="blog-card" *ngFor="let blog of blogs">
-        <mat-card-title>{{ blog.title }}</mat-card-title>
-        <mat-card-subtitle>
-          von {{ blog.author || 'Unknown' }} am
-          {{ blog.createdAt ? (blog.createdAt | date: 'yyyy-MM-dd') : '-' }}
-        </mat-card-subtitle>
+    <ng-container *ngIf="blogs$ | async as blogs; else loadingTpl">
+      <div class="blog-list" *ngIf="blogs.length > 0; else noBlogs">
+        <mat-card class="blog-card" *ngFor="let blog of blogs">
+          <mat-card-title>{{ blog.title }}</mat-card-title>
+          <mat-card-subtitle>
+            {{
+              'BLOG.BY'
+                | translate
+                  : {
+                      author: blog.author || 'Unknown',
+                      date: (blog.createdAt | date: 'yyyy-MM-dd'),
+                    }
+            }}
+          </mat-card-subtitle>
 
-        <mat-card-content>
-          <p>{{ blog.content }}</p>
-        </mat-card-content>
+          <mat-card-content>
+            <p>{{ blog.content }}</p>
+          </mat-card-content>
 
-        <mat-card-actions>
-          <button mat-raised-button color="primary" [routerLink]="['/blogs', blog.id]">
-            {{ 'BLOG.SHOW' | translate }}
-          </button>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" [routerLink]="['/blogs', blog.id]">
+              {{ 'BLOG.SHOW' | translate }}
+            </button>
 
-          <button
-            *ngIf="isAuth()"
-            mat-icon-button
-            aria-label="Like"
-            (click)="toggleLike(blog); $event.stopPropagation()"
-            [disabled]="liking()"
-          >
-            <mat-icon>{{ (isLiked$(blog) | async) ? 'favorite' : 'favorite_border' }}</mat-icon>
-          </button>
-        </mat-card-actions>
-      </mat-card>
-    </div>
+            <button
+              *ngIf="isAuth()"
+              mat-icon-button
+              aria-label="Like"
+              (click)="toggleLike(blog); $event.stopPropagation()"
+              [disabled]="liking()"
+            >
+              <mat-icon>{{ (isLiked$(blog) | async) ? 'favorite' : 'favorite_border' }}</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </ng-container>
+
+    <ng-template #loadingTpl>
+      <app-spinner></app-spinner>
+    </ng-template>
 
     <ng-template #noBlogs>
       <p>{{ 'BLOG.NO_BLOGS' | translate }}</p>

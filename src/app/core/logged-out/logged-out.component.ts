@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   template: `
-    <h1>Du bist abgemeldet</h1>
-    <p>Du kannst dich jederzeit wieder anmelden.</p>
+    <h1>{{ 'LOGOUT.YOU_ARE_LOGGED_OUT' | translate }}</h1>
+    <p>{{ 'LOGOUT.MESSAGE' | translate }}</p>
 
     >
   `,

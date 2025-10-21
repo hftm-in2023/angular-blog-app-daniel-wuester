@@ -28,5 +28,9 @@
     "CONTENT_LENGHT": "Content must be at least 5 characters long",
     "CONTENT_REQUIRED": "Content is required",
     "ERROR": "Oops, the blog could not be saved. Please try again later."
+  },
+  "LOGOUT": {
+    "YOU_ARE_LOGGED_OUT": "You're logged out",
+    "MESSAGE": "You can login again at anytime"
   }
 }
