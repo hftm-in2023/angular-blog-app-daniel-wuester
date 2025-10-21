@@ -28,5 +28,9 @@
     "CONTENT_LENGHT": "Il contenuto deve essere lungo almeno 5 caratteri",
     "CONTENT_REQUIRED": "Il contenuto è obbligatorio",
     "ERROR": "Ops, non è stato possibile salvare il blog. Riprova più tardi."
+  },
+  "LOGOUT": {
+    "YOU_ARE_LOGGED_OUT": "Hai effettuato il logout",
+    "MESSAGE": "Puoi effettuare nuovamente il login in qualsiasi momento"
   }
 }

@@ -28,5 +28,9 @@
     "CONTENT_LENGHT": "Le contenu doit comporter au moins 5 caractères",
     "CONTENT_REQUIRED": "Le contenu est obligatoire",
     "ERROR": "Oups, le blog n'a pas pu être enregistré. Veuillez réessayer plus tard."
+  },
+  "LOGOUT": {
+    "YOU_ARE_LOGGED_OUT": "Tu es déconnecté",
+    "MESSAGE": "Tu peux te reconnecter à tout moment"
   }
 }

@@ -28,5 +28,9 @@
     "CONTENT_LENGHT": "Der Inhalt muss mindestens 5 Zeichen enthalten",
     "CONTENT_REQUIRED": "Inhalt gefordert",
     "ERROR": "Oops, der Blog konnte nicht gespeichert werden. Bitte später erneut versuchen."
+  },
+  "LOGOUT": {
+    "YOU_ARE_LOGGED_OUT": "Du bist abgemeldet",
+    "MESSAGE": "Du kannst dich jederzeit wieder anmelden"
   }
 }
