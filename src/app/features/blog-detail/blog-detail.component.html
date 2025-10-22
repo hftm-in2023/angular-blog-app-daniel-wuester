@@ -1,29 +1,87 @@
-<ng-container *ngIf="blog$ | async as blog; else loading">
-  <h2>{{ blog.title }}</h2>
-  <p>
-    <strong>von:</strong> {{ blog.author }} — <strong>am:</strong>
-    {{ blog.createdAt | date: 'yyyy-MM-dd' }}
-  </p>
+<ng-container *ngIf="blog$ | async as blog; else loadingTpl">
+  <mat-card class="blog-detail-card">
+    <mat-card-header>
+      <mat-card-title>{{ blog.title }}</mat-card-title>
+      <mat-card-subtitle>
+        {{
+          'BLOG.BY'
+            | translate: { author: blog.author, date: (blog.createdAt | date: 'yyyy-MM-dd') }
+        }}
+      </mat-card-subtitle>
+    </mat-card-header>
 
-  <p>{{ blog.content }}</p>
+    <mat-card-content>
+      <p>{{ blog.content }}</p>
+    </mat-card-content>
 
-  <div class="actions">
-    <button
-      mat-icon-button
-      color="warn"
+    <mat-card-actions>
+      <button
+        *ngIf="isAuthenticated()"
+        mat-icon-button
+        color="warn"
+        (click)="toggleLike(blog.id)"
+        aria-label="Like"
+      >
+        <mat-icon>{{ isLiked(blog.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
+      </button>
+
+      <button mat-stroked-button color="primary" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'BLOG.BACK' | translate }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <mat-card class="comments-card">
+    <h3>{{ 'COMMENTS.TITLE' | translate: { default: 'Kommentare' } }}</h3>
+
+    <div *ngIf="comments$ | async as comments; else noComments" class="comments-stack">
+      <mat-card class="comment-card" *ngFor="let c of comments">
+        <div class="comment-header">
+          <div class="avatar">{{ (c.author || 'A').slice(0, 1).toUpperCase() }}</div>
+          <div class="meta">
+            <div class="author">{{ c.author || 'Anonymous' }}</div>
+            <div class="timestamp">
+              {{ c.createdAt | date: 'dd.MM.yyyy, HH:mm' : '' : 'de-CH' }}
+            </div>
+          </div>
+        </div>
+        <div class="comment-body">
+          {{ c.text }}
+        </div>
+      </mat-card>
+    </div>
+
+    <ng-template #noComments>
+      <p>{{ 'COMMENTS.EMPTY' | translate: { default: 'Noch keine Kommentare.' } }}</p>
+    </ng-template>
+
+    <form
+      [formGroup]="commentForm"
+      class="comment-form"
+      (ngSubmit)="submitComment()"
       *ngIf="isAuthenticated()"
-      (click)="toggleLike(blog.id)"
-      aria-label="Like"
     >
-      <mat-icon>{{ isLiked(blog.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
-    </button>
+      <mat-form-field appearance="fill" class="comment-field">
+        <mat-label>{{ 'COMMENTS.FIELD_LABEL' | translate }}</mat-label>
+        <textarea matInput formControlName="text" rows="4"></textarea>
+        <mat-error *ngIf="commentForm.controls.text.hasError('required')">
+          {{ 'COMMENTS.REQUIRED' | translate: { default: 'Kommentar ist erforderlich' } }}
+        </mat-error>
+      </mat-form-field>
 
-    <button mat-stroked-button (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon> {{ 'BLOG.BACK' | translate }}
-    </button>
-  </div>
+      <div class="comment-actions">
+        <button mat-stroked-button type="button" (click)="commentForm.reset()">
+          {{ 'COMMENTS.RESET' | translate: { default: 'Zurücksetzen' } }}
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="commentForm.invalid">
+          {{ 'COMMENTS.SUBMIT' | translate: { default: 'Absenden' } }}
+        </button>
+      </div>
+    </form>
+  </mat-card>
 </ng-container>
 
-<ng-template #loading>
-  <p>Lade…</p>
+<ng-template #loadingTpl>
+  <app-spinner></app-spinner>
 </ng-template>

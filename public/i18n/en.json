@@ -32,5 +32,15 @@
   "LOGOUT": {
     "YOU_ARE_LOGGED_OUT": "You're logged out",
     "MESSAGE": "You can login again at anytime"
+  },
+  "COMMENTS": {
+    "TITLE": "Comments",
+    "NONE": "There are no comments yet.",
+    "LOGIN_HINT": "Please log in to comment.",
+    "FIELD_LABEL": "Your comment",
+    "SUBMIT": "Submit",
+    "REQUIRED": "Comment is required",
+    "MINLENGTH": "At least 2 characters",
+    "RESET": "Reset"
   }
 }

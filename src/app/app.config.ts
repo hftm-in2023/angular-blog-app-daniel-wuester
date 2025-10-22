@@ -11,11 +11,13 @@ import { routes } from './app.routes';
 import { environment } from '../environments/environment';
 import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
 import { CorrelationIdInterceptor } from './shared/interceptors/correlation-id.interceptor';
+import { LOCALE_ID } from '@angular/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withEnabledBlockingInitialNavigation()),
     provideAnimations(),
+    { provide: LOCALE_ID, useValue: 'de-CH' },
 
     provideHttpClient(withInterceptorsFromDi()),
 
