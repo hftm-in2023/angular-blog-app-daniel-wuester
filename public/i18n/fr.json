@@ -32,5 +32,15 @@
   "LOGOUT": {
     "YOU_ARE_LOGGED_OUT": "Tu es déconnecté",
     "MESSAGE": "Tu peux te reconnecter à tout moment"
+  },
+  "COMMENTS": {
+    "TITLE": "Commentaires",
+    "NONE": "Il n'y a pas encore de commentaires.",
+    "LOGIN_HINT": "Veuillez vous connecter pour pouvoir commenter.",
+    "FIELD_LABEL": "Votre commentaire",
+    "SUBMIT": "Envoyer ",
+    "REQUIRED": "Commentaire obligatoire",
+    "MINLENGTH": "Au moins 2 caractères",
+    "RESET": "Reset"
   }
 }

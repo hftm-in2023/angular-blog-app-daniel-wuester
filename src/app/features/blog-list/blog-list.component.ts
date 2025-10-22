@@ -10,6 +10,7 @@ import { Blog } from '../../shared/models/blog.model';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { TranslateModule } from '@ngx-translate/core';
 import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
+import { CommentService } from '../../shared/services/comment.service';
 
 @Component({
   standalone: true,
@@ -59,6 +60,12 @@ import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
             >
               <mat-icon>{{ (isLiked$(blog) | async) ? 'favorite' : 'favorite_border' }}</mat-icon>
             </button>
+            <div class="comment-counter" aria-label="Comments">
+              <mat-icon>chat_bubble_outline</mat-icon>
+              <span class="count" [class.empty]="(commentCount$(blog.id) | async) === 0">
+                {{ (commentCount$(blog.id) | async) ?? 0 }}
+              </span>
+            </div>
           </mat-card-actions>
         </mat-card>
       </div>
@@ -86,8 +93,27 @@ import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
       }
       mat-card-actions {
         display: flex;
-        gap: 0.5rem;
         align-items: center;
+        gap: 0.5rem;
+      }
+
+      .comment-counter {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.9rem;
+        color: rgba(0, 0, 0, 0.6);
+      }
+
+      .comment-counter mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+      }
+
+      .comment-counter .count.empty {
+        opacity: 0.45;
       }
     `,
   ],
@@ -96,6 +122,7 @@ import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
 export class BlogListComponent {
   private oidc = inject(OidcSecurityService);
   private blogService = inject(BlogService);
+  private comments = inject(CommentService);
 
   blogs$: Observable<Blog[]> = this.blogService.getBlogs();
 
@@ -121,5 +148,9 @@ export class BlogListComponent {
     } finally {
       this._liking.set(false);
     }
+  }
+
+  commentCount$(id: number) {
+    return this.comments.getCount$(id);
   }
 }

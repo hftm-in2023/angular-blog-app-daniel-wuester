@@ -32,5 +32,15 @@
   "LOGOUT": {
     "YOU_ARE_LOGGED_OUT": "Hai effettuato il logout",
     "MESSAGE": "Puoi effettuare nuovamente il login in qualsiasi momento"
+  },
+  "COMMENTS": {
+    "TITLE": "Commenti",
+    "NONE": "Non ci sono ancora commenti.",
+    "LOGIN_HINT": "Effettua il login per commentare.",
+    "FIELD_LABEL": "Il tuo commento",
+    "SUBMIT": "Invia",
+    "REQUIRED": "Il commento è obbligatorio",
+    "MINLENGTH": "Almeno 2 caratteri",
+    "RESET": "Reset"
   }
 }
