@@ -5,7 +5,7 @@
       <mat-card-subtitle>
         {{
           'BLOG.BY'
-            | translate: { author: blog.author, date: (blog.createdAt | date: 'yyyy-MM-dd') }
+            | translate: { author: blog.author, date: (blog.createdAt | date: 'dd.MM.yyyy') }
         }}
       </mat-card-subtitle>
     </mat-card-header>
@@ -35,6 +35,10 @@
   <mat-card class="comments-card">
     <h3>{{ 'COMMENTS.TITLE' | translate: { default: 'Kommentare' } }}</h3>
 
+    <ng-template #noComments>
+      <p>{{ 'COMMENTS.NONE' | translate }}</p>
+    </ng-template>
+
     <div *ngIf="comments$ | async as comments; else noComments" class="comments-stack">
       <mat-card class="comment-card" *ngFor="let c of comments">
         <div class="comment-header">
@@ -51,10 +55,9 @@
         </div>
       </mat-card>
     </div>
-
-    <ng-template #noComments>
-      <p>{{ 'COMMENTS.EMPTY' | translate: { default: 'Noch keine Kommentare.' } }}</p>
-    </ng-template>
+    <p *ngIf="!isAuthenticated()" class="login-hint">
+      {{ 'COMMENTS.LOGIN_HINT' | translate }}
+    </p>
 
     <form
       [formGroup]="commentForm"

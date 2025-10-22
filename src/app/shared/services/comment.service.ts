@@ -47,4 +47,8 @@ export class CommentService {
     const next: Store = { ...current, [blogId]: [...list, newItem] };
     this.persist(next);
   }
+
+  getCount$(blogId: number): Observable<number> {
+    return this.store$.pipe(map((s) => s[blogId]?.length ?? 0));
+  }
 }

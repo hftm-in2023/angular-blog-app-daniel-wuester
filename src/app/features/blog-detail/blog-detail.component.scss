@@ -261,4 +261,10 @@ mat-divider[inset] {
     justify-content: flex-end;
     gap: 12px;
   }
+
+  .login-hint {
+    margin-top: 8px;
+    opacity: 0.8;
+    font-style: italic;
+  }
 }
