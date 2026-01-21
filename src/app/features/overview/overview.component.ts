@@ -1,11 +1,11 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
   standalone: true,
   selector: 'app-overview',
-  imports: [CommonModule, MatCardModule],
+  imports: [MatCardModule],
   template: `
     <!-- <mat-card>
       <mat-card-title>Willkommen in der BlogApp </mat-card-title>
