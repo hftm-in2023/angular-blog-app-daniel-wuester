@@ -8,13 +8,15 @@ import { Blog } from '../../../shared/models/blog.model';
   selector: 'app-blog-detail-view',
   imports: [CommonModule, MatCardModule],
   template: `
-    <mat-card *ngIf="blog() as b">
-      <mat-card-title>{{ b.title }}</mat-card-title>
-      <mat-card-subtitle> von {{ b.author }} am {{ b.createdAt | date }} </mat-card-subtitle>
-      <mat-card-content>
-        <p>{{ b.content }}</p>
-      </mat-card-content>
-    </mat-card>
+    @if (blog(); as b) {
+      <mat-card>
+        <mat-card-title>{{ b.title }}</mat-card-title>
+        <mat-card-subtitle> von {{ b.author }} am {{ b.createdAt | date }} </mat-card-subtitle>
+        <mat-card-content>
+          <p>{{ b.content }}</p>
+        </mat-card-content>
+      </mat-card>
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
