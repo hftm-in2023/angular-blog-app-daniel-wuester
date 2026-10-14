@@ -27,57 +27,57 @@ import { CommentService } from '../../shared/services/comment.service';
   template: `
     <h2>{{ 'BLOG.OVERVIEW' | translate }}</h2>
 
-    <ng-container *ngIf="blogs$ | async as blogs; else loadingTpl">
-      <div class="blog-list" *ngIf="blogs.length > 0; else noBlogs">
-        <mat-card class="blog-card" *ngFor="let blog of blogs">
-          <mat-card-title>{{ blog.title }}</mat-card-title>
-          <mat-card-subtitle>
-            {{
-              'BLOG.BY'
-                | translate
-                  : {
-                      author: blog.author || 'Unknown',
-                      date: (blog.createdAt | date: 'yyyy-MM-dd'),
-                    }
-            }}
-          </mat-card-subtitle>
-
-          <mat-card-content>
-            <p>{{ blog.content }}</p>
-          </mat-card-content>
-
-          <mat-card-actions>
-            <button mat-raised-button color="primary" [routerLink]="['/blogs', blog.id]">
-              {{ 'BLOG.SHOW' | translate }}
-            </button>
-
-            <button
-              *ngIf="isAuth()"
-              mat-icon-button
-              aria-label="Like"
-              (click)="toggleLike(blog); $event.stopPropagation()"
-              [disabled]="liking()"
-            >
-              <mat-icon>{{ (isLiked$(blog) | async) ? 'favorite' : 'favorite_border' }}</mat-icon>
-            </button>
-            <div class="comment-counter" aria-label="Comments">
-              <mat-icon>chat_bubble_outline</mat-icon>
-              <span class="count" [class.empty]="(commentCount$(blog.id) | async) === 0">
-                {{ (commentCount$(blog.id) | async) ?? 0 }}
-              </span>
-            </div>
-          </mat-card-actions>
-        </mat-card>
-      </div>
-    </ng-container>
-
-    <ng-template #loadingTpl>
+    @if (blogs$ | async; as blogs) {
+      @if (blogs.length > 0) {
+        <div class="blog-list">
+          @for (blog of blogs; track blog) {
+            <mat-card class="blog-card">
+              <mat-card-title>{{ blog.title }}</mat-card-title>
+              <mat-card-subtitle>
+                {{
+                  'BLOG.BY'
+                    | translate
+                      : {
+                          author: blog.author || 'Unknown',
+                          date: (blog.createdAt | date: 'yyyy-MM-dd'),
+                        }
+                }}
+              </mat-card-subtitle>
+              <mat-card-content>
+                <p>{{ blog.content }}</p>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-raised-button color="primary" [routerLink]="['/blogs', blog.id]">
+                  {{ 'BLOG.SHOW' | translate }}
+                </button>
+                @if (isAuth()) {
+                  <button
+                    mat-icon-button
+                    aria-label="Like"
+                    (click)="toggleLike(blog); $event.stopPropagation()"
+                    [disabled]="liking()"
+                  >
+                    <mat-icon>{{
+                      (isLiked$(blog) | async) ? 'favorite' : 'favorite_border'
+                    }}</mat-icon>
+                  </button>
+                }
+                <div class="comment-counter" aria-label="Comments">
+                  <mat-icon>chat_bubble_outline</mat-icon>
+                  <span class="count" [class.empty]="(commentCount$(blog.id) | async) === 0">
+                    {{ (commentCount$(blog.id) | async) ?? 0 }}
+                  </span>
+                </div>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </div>
+      } @else {
+        <p>{{ 'BLOG.NO_BLOGS' | translate }}</p>
+      }
+    } @else {
       <app-spinner></app-spinner>
-    </ng-template>
-
-    <ng-template #noBlogs>
-      <p>{{ 'BLOG.NO_BLOGS' | translate }}</p>
-    </ng-template>
+    }
   `,
   styles: [
     `
