@@ -1,29 +1,30 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   standalone: true,
   selector: 'app-blog-overview-card',
-  imports: [CommonModule, MatCardModule, MatIconModule],
+  imports: [MatCardModule, MatIconModule],
   template: `
     <mat-card (click)="open.emit()">
       <mat-card-title data-testid="title">{{ title }}</mat-card-title>
       <mat-card-subtitle data-testid="meta">von {{ author }} am {{ date }}</mat-card-subtitle>
       <mat-card-content data-testid="content">{{ content }}</mat-card-content>
 
-      <button
-        *ngIf="showLike"
-        mat-icon-button
-        data-testid="like-btn"
-        (click)="toggleLike.emit(); $event.stopPropagation()"
-        aria-label="Like"
-      >
-        <mat-icon>{{ liked ? 'favorite' : 'favorite_border' }}</mat-icon>
-      </button>
+      @if (showLike) {
+        <button
+          mat-icon-button
+          data-testid="like-btn"
+          (click)="toggleLike.emit(); $event.stopPropagation()"
+          aria-label="Like"
+        >
+          <mat-icon>{{ liked ? 'favorite' : 'favorite_border' }}</mat-icon>
+        </button>
+      }
     </mat-card>
   `,
 })
